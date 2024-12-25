@@ -24,8 +24,8 @@ import (
 	"testing"
 
 	bootstrapv1 "sigs.k8s.io/cluster-api/api/bootstrap/kubeadm/v1beta2"
-	"sigs.k8s.io/cluster-api/bootstrap/kubeadm/internal/cloudinit"
-	"sigs.k8s.io/cluster-api/bootstrap/kubeadm/internal/ignition"
+	"sigs.k8s.io/cluster-api/bootstrap/kubeadm/provisioning/cloudinit"
+	"sigs.k8s.io/cluster-api/bootstrap/kubeadm/provisioning/ignition"
 )
 
 const testString = "foo bar baz"

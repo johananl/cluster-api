@@ -15,15 +15,15 @@ limitations under the License.
 */
 
 // Package ignition aggregates all Ignition flavors into a single package to be consumed
-// by the bootstrap provider by exposing an API similar to 'internal/cloudinit' package.
+// by the bootstrap provider by exposing an API similar to 'provisioning/cloudinit' package.
 package ignition
 
 import (
 	"fmt"
 
 	bootstrapv1 "sigs.k8s.io/cluster-api/api/bootstrap/kubeadm/v1beta2"
-	"sigs.k8s.io/cluster-api/bootstrap/kubeadm/internal/cloudinit"
-	"sigs.k8s.io/cluster-api/bootstrap/kubeadm/internal/ignition/clc"
+	"sigs.k8s.io/cluster-api/bootstrap/kubeadm/provisioning/cloudinit"
+	"sigs.k8s.io/cluster-api/bootstrap/kubeadm/provisioning/ignition/clc"
 )
 
 const (
