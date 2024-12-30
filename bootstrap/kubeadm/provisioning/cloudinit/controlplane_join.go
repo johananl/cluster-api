@@ -46,7 +46,8 @@ runcmd:
 `
 )
 
-// ControlPlaneJoinInput defines context to generate controlplane instance user data for control plane node join.
+// ControlPlaneJoinInput defines the context for generating provisioning data for joining a control
+// plane node.
 type ControlPlaneJoinInput struct {
 	BaseUserData
 	secret.Certificates
@@ -54,8 +55,7 @@ type ControlPlaneJoinInput struct {
 	JoinConfiguration string
 }
 
-// NewJoinControlPlane returns the user data string to be used on a new control plane instance.
-func NewJoinControlPlane(input *ControlPlaneJoinInput) ([]byte, error) {
+func controlPlaneJoinData(input *ControlPlaneJoinInput) ([]byte, error) {
 	// TODO: Consider validating that the correct certificates exist. It is different for external/stacked etcd
 	input.WriteFiles = input.Certificates.AsFiles()
 	input.ControlPlane = true

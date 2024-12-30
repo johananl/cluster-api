@@ -32,9 +32,9 @@ const (
 	kubeadmCommandTemplate = "kubeadm %s --config /etc/kubeadm.yml %s"
 )
 
-// NodeInput defines the context to generate a node user data.
-type NodeInput struct {
-	*cloudinit.NodeInput
+// WorkerJoinInput defines the context to generate a node user data.
+type WorkerJoinInput struct {
+	*cloudinit.WorkerJoinInput
 
 	Ignition *bootstrapv1.IgnitionSpec
 }
@@ -46,20 +46,20 @@ type ControlPlaneJoinInput struct {
 	Ignition *bootstrapv1.IgnitionSpec
 }
 
-// ControlPlaneInput defines the context to generate a controlplane instance user data.
-type ControlPlaneInput struct {
-	*cloudinit.ControlPlaneInput
+// ControlPlaneInitInput defines the context to generate a controlplane instance user data.
+type ControlPlaneInitInput struct {
+	*cloudinit.ControlPlaneInitInput
 
 	Ignition *bootstrapv1.IgnitionSpec
 }
 
-// NewNode returns Ignition configuration for new worker node joining the cluster.
-func NewNode(input *NodeInput) ([]byte, string, error) {
+// Returns Ignition configuration for new worker node joining the cluster.
+func workerJoinData(input *WorkerJoinInput) ([]byte, string, error) {
 	if input == nil {
 		return nil, "", fmt.Errorf("input can't be nil")
 	}
 
-	if input.NodeInput == nil {
+	if input.WorkerJoinInput == nil {
 		return nil, "", fmt.Errorf("node input can't be nil")
 	}
 
@@ -69,8 +69,8 @@ func NewNode(input *NodeInput) ([]byte, string, error) {
 	return render(&input.BaseUserData, input.Ignition, input.JoinConfiguration)
 }
 
-// NewJoinControlPlane returns Ignition configuration for new controlplane node joining the cluster.
-func NewJoinControlPlane(input *ControlPlaneJoinInput) ([]byte, string, error) {
+// Returns Ignition configuration for new controlplane node joining the cluster.
+func controlPlaneJoinData(input *ControlPlaneJoinInput) ([]byte, string, error) {
 	if input == nil {
 		return nil, "", fmt.Errorf("input can't be nil")
 	}
@@ -86,13 +86,13 @@ func NewJoinControlPlane(input *ControlPlaneJoinInput) ([]byte, string, error) {
 	return render(&input.BaseUserData, input.Ignition, input.JoinConfiguration)
 }
 
-// NewInitControlPlane returns Ignition configuration for bootstrapping new cluster.
-func NewInitControlPlane(input *ControlPlaneInput) ([]byte, string, error) {
+// Returns Ignition configuration for bootstrapping new cluster.
+func controlPlaneInitData(input *ControlPlaneInitInput) ([]byte, string, error) {
 	if input == nil {
 		return nil, "", fmt.Errorf("input can't be nil")
 	}
 
-	if input.ControlPlaneInput == nil {
+	if input.ControlPlaneInitInput == nil {
 		return nil, "", fmt.Errorf("controlplane input can't be nil")
 	}
 
