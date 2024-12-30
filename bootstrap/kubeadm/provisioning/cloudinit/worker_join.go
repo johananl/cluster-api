@@ -42,14 +42,13 @@ runcmd:
 `
 )
 
-// NodeInput defines the context to generate a node user data.
-type NodeInput struct {
+// WorkerJoinInput defines the context for generating provisioning data for joining a worker node.
+type WorkerJoinInput struct {
 	BaseUserData
 	JoinConfiguration string
 }
 
-// NewNode returns the user data string to be used on a node instance.
-func NewNode(input *NodeInput) ([]byte, error) {
+func workerJoinData(input *WorkerJoinInput) ([]byte, error) {
 	input.prepare()
 	input.Header = cloudConfigHeader
 	return generate("Node", nodeCloudInit, input)

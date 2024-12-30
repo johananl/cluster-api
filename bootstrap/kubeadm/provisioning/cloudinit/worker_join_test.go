@@ -25,16 +25,16 @@ import (
 	bootstrapv1 "sigs.k8s.io/cluster-api/api/bootstrap/kubeadm/v1beta2"
 )
 
-func TestNewNode(t *testing.T) {
+func TestWorkerJoinData(t *testing.T) {
 	tests := []struct {
 		name    string
-		input   *NodeInput
+		input   *WorkerJoinInput
 		check   func([]byte) error
 		wantErr bool
 	}{
 		{
 			"check for duplicated write_files",
-			&NodeInput{
+			&WorkerJoinInput{
 				BaseUserData: BaseUserData{
 					AdditionalFiles: []bootstrapv1.File{
 						{
@@ -51,16 +51,16 @@ func TestNewNode(t *testing.T) {
 		},
 		{
 			"check for existence of /run/kubeadm/kubeadm-join-config.yaml and /run/cluster-api/placeholder",
-			&NodeInput{},
+			&WorkerJoinInput{},
 			checkWriteFiles("/run/kubeadm/kubeadm-join-config.yaml", "/run/cluster-api/placeholder"),
 			false,
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got, err := NewNode(tt.input)
+			got, err := workerJoinData(tt.input)
 			if (err != nil) != tt.wantErr {
-				t.Errorf("NewNode() error = %v, wantErr %v", err, tt.wantErr)
+				t.Errorf("workerJoinData() error = %v, wantErr %v", err, tt.wantErr)
 				return
 			}
 			if err := tt.check(got); err != nil {

@@ -30,7 +30,7 @@ import (
 func TestNewInitControlPlaneAdditionalFileEncodings(t *testing.T) {
 	g := NewWithT(t)
 
-	cpinput := &ControlPlaneInput{
+	cpinput := &ControlPlaneInitInput{
 		BaseUserData: BaseUserData{
 			Header:              "test",
 			BootCommands:        nil,
@@ -68,7 +68,7 @@ func TestNewInitControlPlaneAdditionalFileEncodings(t *testing.T) {
 		}
 	}
 
-	out, err := NewInitControlPlane(cpinput)
+	out, err := controlPlaneInitData(cpinput)
 	g.Expect(err).ToNot(HaveOccurred())
 
 	expectedFiles := []string{
@@ -92,7 +92,7 @@ func TestNewInitControlPlaneAdditionalFileEncodings(t *testing.T) {
 func TestNewInitControlPlaneCommands(t *testing.T) {
 	g := NewWithT(t)
 
-	cpinput := &ControlPlaneInput{
+	cpinput := &ControlPlaneInitInput{
 		BaseUserData: BaseUserData{
 			Header:              "test",
 			BootCommands:        []string{"echo $(date)", "echo 'hello BootCommands!'"},
@@ -115,7 +115,7 @@ func TestNewInitControlPlaneCommands(t *testing.T) {
 		}
 	}
 
-	out, err := NewInitControlPlane(cpinput)
+	out, err := controlPlaneInitData(cpinput)
 	g.Expect(err).ToNot(HaveOccurred())
 
 	expectedBootCmd := `bootcmd:
@@ -135,7 +135,7 @@ func TestNewInitControlPlaneCommands(t *testing.T) {
 func TestNewInitControlPlaneDiskMounts(t *testing.T) {
 	g := NewWithT(t)
 
-	cpinput := &ControlPlaneInput{
+	cpinput := &ControlPlaneInitInput{
 		BaseUserData: BaseUserData{
 			Header:              "test",
 			BootCommands:        nil,
@@ -171,7 +171,7 @@ func TestNewInitControlPlaneDiskMounts(t *testing.T) {
 		InitConfiguration:    "my-init-config",
 	}
 
-	out, err := NewInitControlPlane(cpinput)
+	out, err := controlPlaneInitData(cpinput)
 	g.Expect(err).ToNot(HaveOccurred())
 
 	expectedDiskSetup := `disk_setup:
@@ -232,7 +232,7 @@ func TestNewJoinControlPlaneAdditionalFileEncodings(t *testing.T) {
 		}
 	}
 
-	out, err := NewJoinControlPlane(cpinput)
+	out, err := controlPlaneJoinData(cpinput)
 	g.Expect(err).ToNot(HaveOccurred())
 
 	expectedFiles := []string{
@@ -274,7 +274,7 @@ func TestNewJoinControlPlaneCommands(t *testing.T) {
 		}
 	}
 
-	out, err := NewJoinControlPlane(cpinput)
+	out, err := controlPlaneJoinData(cpinput)
 	g.Expect(err).ToNot(HaveOccurred())
 
 	expectedBootCmd := `bootcmd:
@@ -294,7 +294,7 @@ func TestNewJoinControlPlaneCommands(t *testing.T) {
 func TestNewJoinNodeCommands(t *testing.T) {
 	g := NewWithT(t)
 
-	nodeinput := &NodeInput{
+	nodeinput := &WorkerJoinInput{
 		BaseUserData: BaseUserData{
 			Header:              "test",
 			BootCommands:        []string{"echo $(date)", "echo 'hello BootCommands!'"},
@@ -308,7 +308,7 @@ func TestNewJoinNodeCommands(t *testing.T) {
 		JoinConfiguration: "my-join-config",
 	}
 
-	out, err := NewNode(nodeinput)
+	out, err := workerJoinData(nodeinput)
 	g.Expect(err).ToNot(HaveOccurred())
 
 	expectedBootCmd := `bootcmd:

@@ -46,6 +46,7 @@ import (
 	bootstrapv1 "sigs.k8s.io/cluster-api/api/bootstrap/kubeadm/v1beta2"
 	clusterv1 "sigs.k8s.io/cluster-api/api/core/v1beta2"
 	"sigs.k8s.io/cluster-api/bootstrap/kubeadm/internal/locking"
+	"sigs.k8s.io/cluster-api/bootstrap/kubeadm/provisioning"
 	"sigs.k8s.io/cluster-api/bootstrap/kubeadm/provisioning/cloudinit"
 	"sigs.k8s.io/cluster-api/bootstrap/kubeadm/provisioning/ignition"
 	kubeadmtypes "sigs.k8s.io/cluster-api/bootstrap/kubeadm/types"
@@ -86,6 +87,7 @@ type KubeadmConfigReconciler struct {
 	SecretCachingClient client.Client
 	ClusterCache        clustercache.ClusterCache
 	KubeadmInitLock     InitLocker
+	Provisioner         provisioning.Provisioner
 
 	// WatchFilterValue is the label value used to filter events prior to reconciliation.
 	WatchFilterValue string
@@ -625,7 +627,7 @@ func (r *KubeadmConfigReconciler) handleClusterNotInitialized(ctx context.Contex
 		return ctrl.Result{}, err
 	}
 
-	controlPlaneInput := &cloudinit.ControlPlaneInput{
+	cloudInitInput := &cloudinit.ControlPlaneInitInput{
 		BaseUserData: cloudinit.BaseUserData{
 			AdditionalFiles:     files,
 			NTP:                 scope.Config.Spec.NTP,
@@ -643,23 +645,24 @@ func (r *KubeadmConfigReconciler) handleClusterNotInitialized(ctx context.Contex
 		Certificates:         certificates,
 	}
 
-	var bootstrapInitData []byte
-	switch scope.Config.Spec.Format {
-	case bootstrapv1.Ignition:
-		bootstrapInitData, _, err = ignition.NewInitControlPlane(&ignition.ControlPlaneInput{
-			ControlPlaneInput: controlPlaneInput,
-			Ignition:          scope.Config.Spec.Ignition,
-		})
-	default:
-		bootstrapInitData, err = cloudinit.NewInitControlPlane(controlPlaneInput)
+	// TODO: Move the provisioner implementation decision out of here.
+	var input interface{}
+	if scope.Config.Spec.Format == bootstrapv1.Ignition {
+		input = &ignition.ControlPlaneInitInput{
+			ControlPlaneInitInput: cloudInitInput,
+			Ignition:              scope.Config.Spec.Ignition,
+		}
+	} else {
+		input = cloudInitInput
 	}
 
+	data, err := r.Provisioner.ControlPlaneInitData(input)
 	if err != nil {
 		scope.Error(err, "Failed to generate user data for bootstrap control plane")
 		return ctrl.Result{}, err
 	}
 
-	if err := r.storeBootstrapData(ctx, scope, bootstrapInitData); err != nil {
+	if err := r.storeBootstrapData(ctx, scope, data); err != nil {
 		scope.Error(err, "Failed to store bootstrap data")
 		return ctrl.Result{}, err
 	}
@@ -782,7 +785,7 @@ func (r *KubeadmConfigReconciler) joinWorker(ctx context.Context, scope *Scope) 
 		files = append(files, *kubeconfig)
 	}
 
-	nodeInput := &cloudinit.NodeInput{
+	cloudInitInput := &cloudinit.WorkerJoinInput{
 		BaseUserData: cloudinit.BaseUserData{
 			AdditionalFiles:     files,
 			NTP:                 scope.Config.Spec.NTP,
@@ -798,23 +801,24 @@ func (r *KubeadmConfigReconciler) joinWorker(ctx context.Context, scope *Scope) 
 		JoinConfiguration: joinData,
 	}
 
-	var bootstrapJoinData []byte
-	switch scope.Config.Spec.Format {
-	case bootstrapv1.Ignition:
-		bootstrapJoinData, _, err = ignition.NewNode(&ignition.NodeInput{
-			NodeInput: nodeInput,
-			Ignition:  scope.Config.Spec.Ignition,
-		})
-	default:
-		bootstrapJoinData, err = cloudinit.NewNode(nodeInput)
+	// TODO: Move the provisioner implementation decision out of here.
+	var input interface{}
+	if scope.Config.Spec.Format == bootstrapv1.Ignition {
+		input = &ignition.WorkerJoinInput{
+			WorkerJoinInput: cloudInitInput,
+			Ignition:        scope.Config.Spec.Ignition,
+		}
+	} else {
+		input = cloudInitInput
 	}
 
+	data, err := r.Provisioner.WorkerJoinData(input)
 	if err != nil {
 		scope.Error(err, "Failed to create a worker join configuration")
 		return ctrl.Result{}, err
 	}
 
-	if err := r.storeBootstrapData(ctx, scope, bootstrapJoinData); err != nil {
+	if err := r.storeBootstrapData(ctx, scope, data); err != nil {
 		scope.Error(err, "Failed to store bootstrap data")
 		return ctrl.Result{}, err
 	}
@@ -932,7 +936,7 @@ func (r *KubeadmConfigReconciler) joinControlplane(ctx context.Context, scope *S
 		files = append(files, *kubeconfig)
 	}
 
-	controlPlaneJoinInput := &cloudinit.ControlPlaneJoinInput{
+	cloudInitInput := &cloudinit.ControlPlaneJoinInput{
 		JoinConfiguration: joinData,
 		Certificates:      certificates,
 		BaseUserData: cloudinit.BaseUserData{
@@ -949,23 +953,24 @@ func (r *KubeadmConfigReconciler) joinControlplane(ctx context.Context, scope *S
 		},
 	}
 
-	var bootstrapJoinData []byte
-	switch scope.Config.Spec.Format {
-	case bootstrapv1.Ignition:
-		bootstrapJoinData, _, err = ignition.NewJoinControlPlane(&ignition.ControlPlaneJoinInput{
-			ControlPlaneJoinInput: controlPlaneJoinInput,
+	// TODO: Move the provisioner implementation decision out of here.
+	var input interface{}
+	if scope.Config.Spec.Format == bootstrapv1.Ignition {
+		input = &ignition.ControlPlaneJoinInput{
+			ControlPlaneJoinInput: cloudInitInput,
 			Ignition:              scope.Config.Spec.Ignition,
-		})
-	default:
-		bootstrapJoinData, err = cloudinit.NewJoinControlPlane(controlPlaneJoinInput)
+		}
+	} else {
+		input = cloudInitInput
 	}
 
+	data, err := r.Provisioner.ControlPlaneJoinData(input)
 	if err != nil {
 		scope.Error(err, "Failed to create a control plane join configuration")
 		return ctrl.Result{}, err
 	}
 
-	if err := r.storeBootstrapData(ctx, scope, bootstrapJoinData); err != nil {
+	if err := r.storeBootstrapData(ctx, scope, data); err != nil {
 		scope.Error(err, "Failed to store bootstrap data")
 		return ctrl.Result{}, err
 	}

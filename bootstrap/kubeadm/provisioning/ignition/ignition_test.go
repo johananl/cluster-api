@@ -14,7 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-package ignition_test
+package ignition
 
 import (
 	"encoding/json"
@@ -25,7 +25,6 @@ import (
 
 	bootstrapv1 "sigs.k8s.io/cluster-api/api/bootstrap/kubeadm/v1beta2"
 	"sigs.k8s.io/cluster-api/bootstrap/kubeadm/provisioning/cloudinit"
-	"sigs.k8s.io/cluster-api/bootstrap/kubeadm/provisioning/ignition"
 )
 
 const testString = "foo bar baz"
@@ -36,7 +35,7 @@ func Test_NewNode(t *testing.T) {
 	t.Run("returns error when", func(t *testing.T) {
 		t.Parallel()
 
-		cases := map[string]*ignition.NodeInput{
+		cases := map[string]*WorkerJoinInput{
 			"nil input is given":      nil,
 			"nil node input is given": {},
 		}
@@ -45,7 +44,7 @@ func Test_NewNode(t *testing.T) {
 			t.Run(name, func(t *testing.T) {
 				t.Parallel()
 
-				ignitionData, _, err := ignition.NewNode(input)
+				ignitionData, _, err := workerJoinData(input)
 				if err == nil {
 					t.Fatalf("Expected error")
 				}
@@ -60,12 +59,12 @@ func Test_NewNode(t *testing.T) {
 	t.Run("returns JSON data without error", func(t *testing.T) {
 		t.Parallel()
 
-		input := &ignition.NodeInput{
-			NodeInput: &cloudinit.NodeInput{},
-			Ignition:  &bootstrapv1.IgnitionSpec{},
+		input := &WorkerJoinInput{
+			WorkerJoinInput: &cloudinit.WorkerJoinInput{},
+			Ignition:        &bootstrapv1.IgnitionSpec{},
 		}
 
-		ignitionData, _, err := ignition.NewNode(input)
+		ignitionData, _, err := workerJoinData(input)
 		if err != nil {
 			t.Fatalf("Unexpected error: %v", err)
 		}
@@ -84,8 +83,8 @@ func Test_NewNode(t *testing.T) {
 	t.Run("returns Ignition with user-specified snippet", func(t *testing.T) {
 		t.Parallel()
 
-		input := &ignition.NodeInput{
-			NodeInput: &cloudinit.NodeInput{},
+		input := &WorkerJoinInput{
+			WorkerJoinInput: &cloudinit.WorkerJoinInput{},
 			Ignition: &bootstrapv1.IgnitionSpec{
 				ContainerLinuxConfig: &bootstrapv1.ContainerLinuxConfig{
 					AdditionalConfig: fmt.Sprintf(`storage:
@@ -100,7 +99,7 @@ func Test_NewNode(t *testing.T) {
 			},
 		}
 
-		ignitionData, _, err := ignition.NewNode(input)
+		ignitionData, _, err := workerJoinData(input)
 		if err != nil {
 			t.Fatalf("Unexpected error: %v", err)
 		}
@@ -116,8 +115,8 @@ func Test_NewNode(t *testing.T) {
 	t.Run("returns warnings if any", func(t *testing.T) {
 		t.Parallel()
 
-		input := &ignition.NodeInput{
-			NodeInput: &cloudinit.NodeInput{},
+		input := &WorkerJoinInput{
+			WorkerJoinInput: &cloudinit.WorkerJoinInput{},
 			Ignition: &bootstrapv1.IgnitionSpec{
 				ContainerLinuxConfig: &bootstrapv1.ContainerLinuxConfig{
 					AdditionalConfig: fmt.Sprintf(`storage:
@@ -131,7 +130,7 @@ func Test_NewNode(t *testing.T) {
 			},
 		}
 
-		ignitionData, warnings, err := ignition.NewNode(input)
+		ignitionData, warnings, err := workerJoinData(input)
 		if err != nil {
 			t.Fatalf("Unexpected error: %v", err)
 		}
@@ -152,7 +151,7 @@ func Test_NewJoinControlPlane(t *testing.T) {
 	t.Run("returns error when", func(t *testing.T) {
 		t.Parallel()
 
-		cases := map[string]*ignition.ControlPlaneJoinInput{
+		cases := map[string]*ControlPlaneJoinInput{
 			"nil input is given":      nil,
 			"nil node input is given": {},
 		}
@@ -161,7 +160,7 @@ func Test_NewJoinControlPlane(t *testing.T) {
 			t.Run(name, func(t *testing.T) {
 				t.Parallel()
 
-				ignitionData, _, err := ignition.NewJoinControlPlane(input)
+				ignitionData, _, err := controlPlaneJoinData(input)
 				if err == nil {
 					t.Fatalf("Expected error")
 				}
@@ -176,12 +175,12 @@ func Test_NewJoinControlPlane(t *testing.T) {
 	t.Run("returns JSON data without error", func(t *testing.T) {
 		t.Parallel()
 
-		input := &ignition.ControlPlaneJoinInput{
+		input := &ControlPlaneJoinInput{
 			ControlPlaneJoinInput: &cloudinit.ControlPlaneJoinInput{},
 			Ignition:              &bootstrapv1.IgnitionSpec{},
 		}
 
-		ignitionData, _, err := ignition.NewJoinControlPlane(input)
+		ignitionData, _, err := controlPlaneJoinData(input)
 		if err != nil {
 			t.Fatalf("Unexpected error: %v", err)
 		}
@@ -200,7 +199,7 @@ func Test_NewJoinControlPlane(t *testing.T) {
 	t.Run("returns Ignition with user specified snippet", func(t *testing.T) {
 		t.Parallel()
 
-		input := &ignition.ControlPlaneJoinInput{
+		input := &ControlPlaneJoinInput{
 			ControlPlaneJoinInput: &cloudinit.ControlPlaneJoinInput{},
 			Ignition: &bootstrapv1.IgnitionSpec{
 				ContainerLinuxConfig: &bootstrapv1.ContainerLinuxConfig{
@@ -216,7 +215,7 @@ func Test_NewJoinControlPlane(t *testing.T) {
 			},
 		}
 
-		ignitionData, _, err := ignition.NewJoinControlPlane(input)
+		ignitionData, _, err := controlPlaneJoinData(input)
 		if err != nil {
 			t.Fatalf("Unexpected error: %v", err)
 		}
@@ -232,7 +231,7 @@ func Test_NewJoinControlPlane(t *testing.T) {
 	t.Run("returns warnings if any", func(t *testing.T) {
 		t.Parallel()
 
-		input := &ignition.ControlPlaneJoinInput{
+		input := &ControlPlaneJoinInput{
 			ControlPlaneJoinInput: &cloudinit.ControlPlaneJoinInput{},
 			Ignition: &bootstrapv1.IgnitionSpec{
 				ContainerLinuxConfig: &bootstrapv1.ContainerLinuxConfig{
@@ -247,7 +246,7 @@ func Test_NewJoinControlPlane(t *testing.T) {
 			},
 		}
 
-		ignitionData, warnings, err := ignition.NewJoinControlPlane(input)
+		ignitionData, warnings, err := controlPlaneJoinData(input)
 		if err != nil {
 			t.Fatalf("Unexpected error: %v", err)
 		}
@@ -268,7 +267,7 @@ func Test_NewInitControlPlane(t *testing.T) {
 	t.Run("returns error when", func(t *testing.T) {
 		t.Parallel()
 
-		cases := map[string]*ignition.ControlPlaneInput{
+		cases := map[string]*ControlPlaneInitInput{
 			"nil input is given":      nil,
 			"nil node input is given": {},
 		}
@@ -277,7 +276,7 @@ func Test_NewInitControlPlane(t *testing.T) {
 			t.Run(name, func(t *testing.T) {
 				t.Parallel()
 
-				ignitionData, _, err := ignition.NewInitControlPlane(input)
+				ignitionData, _, err := controlPlaneInitData(input)
 				if err == nil {
 					t.Fatalf("Expected error")
 				}
@@ -292,11 +291,11 @@ func Test_NewInitControlPlane(t *testing.T) {
 	t.Run("returns without error", func(t *testing.T) {
 		t.Parallel()
 
-		input := &ignition.ControlPlaneInput{
-			ControlPlaneInput: &cloudinit.ControlPlaneInput{},
+		input := &ControlPlaneInitInput{
+			ControlPlaneInitInput: &cloudinit.ControlPlaneInitInput{},
 		}
 
-		ignitionData, _, err := ignition.NewInitControlPlane(input)
+		ignitionData, _, err := controlPlaneInitData(input)
 		if err != nil {
 			t.Fatalf("Unexpected error: %v", err)
 		}
@@ -317,8 +316,8 @@ func Test_NewInitControlPlane(t *testing.T) {
 	t.Run("returns Ignition with user-specified snippet", func(t *testing.T) {
 		t.Parallel()
 
-		input := &ignition.ControlPlaneInput{
-			ControlPlaneInput: &cloudinit.ControlPlaneInput{},
+		input := &ControlPlaneInitInput{
+			ControlPlaneInitInput: &cloudinit.ControlPlaneInitInput{},
 			Ignition: &bootstrapv1.IgnitionSpec{
 				ContainerLinuxConfig: &bootstrapv1.ContainerLinuxConfig{
 					AdditionalConfig: fmt.Sprintf(`storage:
@@ -333,7 +332,7 @@ func Test_NewInitControlPlane(t *testing.T) {
 			},
 		}
 
-		ignitionData, _, err := ignition.NewInitControlPlane(input)
+		ignitionData, _, err := controlPlaneInitData(input)
 		if err != nil {
 			t.Fatalf("Unexpected error: %v", err)
 		}
@@ -349,8 +348,8 @@ func Test_NewInitControlPlane(t *testing.T) {
 	t.Run("returns warnings if any", func(t *testing.T) {
 		t.Parallel()
 
-		input := &ignition.ControlPlaneInput{
-			ControlPlaneInput: &cloudinit.ControlPlaneInput{},
+		input := &ControlPlaneInitInput{
+			ControlPlaneInitInput: &cloudinit.ControlPlaneInitInput{},
 			Ignition: &bootstrapv1.IgnitionSpec{
 				ContainerLinuxConfig: &bootstrapv1.ContainerLinuxConfig{
 					AdditionalConfig: fmt.Sprintf(`storage:
@@ -364,7 +363,7 @@ func Test_NewInitControlPlane(t *testing.T) {
 			},
 		}
 
-		ignitionData, warnings, err := ignition.NewInitControlPlane(input)
+		ignitionData, warnings, err := controlPlaneInitData(input)
 		if err != nil {
 			t.Fatalf("Unexpected error: %v", err)
 		}

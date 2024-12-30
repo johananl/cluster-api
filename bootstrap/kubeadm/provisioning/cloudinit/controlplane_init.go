@@ -48,8 +48,9 @@ runcmd:
 `
 )
 
-// ControlPlaneInput defines the context to generate a controlplane instance user data.
-type ControlPlaneInput struct {
+// ControlPlaneInitInput defines the context for generating provisioning data for initializing a
+// control plane node.
+type ControlPlaneInitInput struct {
 	BaseUserData
 	secret.Certificates
 
@@ -57,8 +58,7 @@ type ControlPlaneInput struct {
 	InitConfiguration    string
 }
 
-// NewInitControlPlane returns the user data string to be used on a controlplane instance.
-func NewInitControlPlane(input *ControlPlaneInput) ([]byte, error) {
+func controlPlaneInitData(input *ControlPlaneInitInput) ([]byte, error) {
 	input.Header = cloudConfigHeader
 	input.WriteFiles = input.AsFiles()
 	input.WriteFiles = append(input.WriteFiles, input.AdditionalFiles...)

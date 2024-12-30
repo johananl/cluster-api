@@ -51,6 +51,7 @@ import (
 	clusterv1 "sigs.k8s.io/cluster-api/api/core/v1beta2"
 	kubeadmbootstrapcontrollers "sigs.k8s.io/cluster-api/bootstrap/kubeadm/controllers"
 	"sigs.k8s.io/cluster-api/bootstrap/kubeadm/internal/webhooks"
+	"sigs.k8s.io/cluster-api/bootstrap/kubeadm/provisioning/cloudinit"
 	"sigs.k8s.io/cluster-api/controllers/clustercache"
 	"sigs.k8s.io/cluster-api/controllers/crdmigrator"
 	"sigs.k8s.io/cluster-api/controllers/remote"
@@ -379,8 +380,10 @@ func setupReconcilers(ctx context.Context, mgr ctrl.Manager) {
 		Client:              mgr.GetClient(),
 		SecretCachingClient: secretCachingClient,
 		ClusterCache:        clusterCache,
-		WatchFilterValue:    watchFilterValue,
-		TokenTTL:            tokenTTL,
+		// TODO: Figure out how to plug in Ignition instead of cloud-init.
+		Provisioner:      cloudinit.NewProvisioner(),
+		WatchFilterValue: watchFilterValue,
+		TokenTTL:         tokenTTL,
 	}).SetupWithManager(ctx, mgr, concurrency(kubeadmConfigConcurrency)); err != nil {
 		setupLog.Error(err, "unable to create controller", "controller", "KubeadmConfig")
 		os.Exit(1)
