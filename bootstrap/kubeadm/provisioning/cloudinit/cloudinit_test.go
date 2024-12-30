@@ -31,7 +31,7 @@ import (
 func TestNewInitControlPlaneAdditionalFileEncodings(t *testing.T) {
 	g := NewWithT(t)
 
-	cpinput := &ControlPlaneInput{
+	cpinput := &ControlPlaneInitInput{
 		BaseUserData: BaseUserData{
 			Header:              "test",
 			PreKubeadmCommands:  nil,
@@ -68,7 +68,7 @@ func TestNewInitControlPlaneAdditionalFileEncodings(t *testing.T) {
 		}
 	}
 
-	out, err := NewInitControlPlane(cpinput)
+	out, err := controlPlaneInitData(cpinput)
 	g.Expect(err).ToNot(HaveOccurred())
 
 	expectedFiles := []string{
@@ -92,7 +92,7 @@ func TestNewInitControlPlaneAdditionalFileEncodings(t *testing.T) {
 func TestNewInitControlPlaneCommands(t *testing.T) {
 	g := NewWithT(t)
 
-	cpinput := &ControlPlaneInput{
+	cpinput := &ControlPlaneInitInput{
 		BaseUserData: BaseUserData{
 			Header:              "test",
 			PreKubeadmCommands:  []string{`"echo $(date) ': hello world!'"`},
@@ -114,7 +114,7 @@ func TestNewInitControlPlaneCommands(t *testing.T) {
 		}
 	}
 
-	out, err := NewInitControlPlane(cpinput)
+	out, err := controlPlaneInitData(cpinput)
 	g.Expect(err).ToNot(HaveOccurred())
 
 	expectedCommands := []string{
@@ -129,7 +129,7 @@ func TestNewInitControlPlaneCommands(t *testing.T) {
 func TestNewInitControlPlaneDiskMounts(t *testing.T) {
 	g := NewWithT(t)
 
-	cpinput := &ControlPlaneInput{
+	cpinput := &ControlPlaneInitInput{
 		BaseUserData: BaseUserData{
 			Header:              "test",
 			PreKubeadmCommands:  nil,
@@ -164,7 +164,7 @@ func TestNewInitControlPlaneDiskMounts(t *testing.T) {
 		InitConfiguration:    "my-init-config",
 	}
 
-	out, err := NewInitControlPlane(cpinput)
+	out, err := controlPlaneInitData(cpinput)
 	g.Expect(err).ToNot(HaveOccurred())
 
 	expectedDiskSetup := `disk_setup:
@@ -224,7 +224,7 @@ func TestNewJoinControlPlaneAdditionalFileEncodings(t *testing.T) {
 		}
 	}
 
-	out, err := NewJoinControlPlane(cpinput)
+	out, err := controlPlaneJoinData(cpinput)
 	g.Expect(err).ToNot(HaveOccurred())
 
 	expectedFiles := []string{
@@ -266,7 +266,7 @@ func TestNewJoinControlPlaneExperimentalRetry(t *testing.T) {
 		}
 	}
 
-	out, err := NewJoinControlPlane(cpinput)
+	out, err := controlPlaneJoinData(cpinput)
 	g.Expect(err).ToNot(HaveOccurred())
 
 	expectedFiles := []string{

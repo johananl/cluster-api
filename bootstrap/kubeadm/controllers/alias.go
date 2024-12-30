@@ -25,6 +25,7 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/controller"
 
 	kubeadmbootstrapcontrollers "sigs.k8s.io/cluster-api/bootstrap/kubeadm/internal/controllers"
+	"sigs.k8s.io/cluster-api/bootstrap/kubeadm/provisioning/cloudinit"
 	"sigs.k8s.io/cluster-api/controllers/clustercache"
 )
 
@@ -56,7 +57,9 @@ func (r *KubeadmConfigReconciler) SetupWithManager(ctx context.Context, mgr ctrl
 		Client:              r.Client,
 		SecretCachingClient: r.SecretCachingClient,
 		ClusterCache:        r.ClusterCache,
-		WatchFilterValue:    r.WatchFilterValue,
-		TokenTTL:            r.TokenTTL,
+		// TODO: Figure out how to plug in Ignition instead of cloud-init.
+		Provisioner:      cloudinit.NewProvisioner(),
+		WatchFilterValue: r.WatchFilterValue,
+		TokenTTL:         r.TokenTTL,
 	}).SetupWithManager(ctx, mgr, options)
 }
