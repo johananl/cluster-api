@@ -25,6 +25,7 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/controller"
 
 	kubeadmbootstrapcontrollers "sigs.k8s.io/cluster-api/bootstrap/kubeadm/internal/controllers"
+	"sigs.k8s.io/cluster-api/bootstrap/kubeadm/provisioning"
 	"sigs.k8s.io/cluster-api/controllers/clustercache"
 )
 
@@ -43,6 +44,8 @@ type KubeadmConfigReconciler struct {
 
 	ClusterCache clustercache.ClusterCache
 
+	Provisioner provisioning.Provisioner
+
 	// WatchFilterValue is the label value used to filter events prior to reconciliation.
 	WatchFilterValue string
 
@@ -56,6 +59,7 @@ func (r *KubeadmConfigReconciler) SetupWithManager(ctx context.Context, mgr ctrl
 		Client:              r.Client,
 		SecretCachingClient: r.SecretCachingClient,
 		ClusterCache:        r.ClusterCache,
+		Provisioner:         r.Provisioner,
 		WatchFilterValue:    r.WatchFilterValue,
 		TokenTTL:            r.TokenTTL,
 	}).SetupWithManager(ctx, mgr, options)

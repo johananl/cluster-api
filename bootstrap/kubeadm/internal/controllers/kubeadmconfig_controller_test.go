@@ -23,7 +23,7 @@ import (
 	"testing"
 	"time"
 
-	ignition "github.com/flatcar/ignition/config/v2_3"
+	ignitionv2 "github.com/flatcar/ignition/config/v2_3"
 	. "github.com/onsi/gomega"
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -40,6 +40,8 @@ import (
 	clusterv1 "sigs.k8s.io/cluster-api/api/v1beta1"
 	bootstrapv1 "sigs.k8s.io/cluster-api/bootstrap/kubeadm/api/v1beta1"
 	bootstrapbuilder "sigs.k8s.io/cluster-api/bootstrap/kubeadm/internal/builder"
+	"sigs.k8s.io/cluster-api/bootstrap/kubeadm/provisioning/cloudinit"
+	"sigs.k8s.io/cluster-api/bootstrap/kubeadm/provisioning/ignition"
 	"sigs.k8s.io/cluster-api/controllers/clustercache"
 	expv1 "sigs.k8s.io/cluster-api/exp/api/v1beta1"
 	"sigs.k8s.io/cluster-api/feature"
@@ -514,6 +516,7 @@ func TestKubeadmConfigReconciler_Reconcile_GenerateCloudConfigData(t *testing.T)
 		SecretCachingClient: myclient,
 		ClusterCache:        clustercache.NewFakeClusterCache(myclient, client.ObjectKey{Name: cluster.Name, Namespace: cluster.Namespace}),
 		KubeadmInitLock:     &myInitLocker{},
+		Provisioner:         cloudinit.NewProvisioner(),
 	}
 
 	request := ctrl.Request{
@@ -576,6 +579,7 @@ func TestKubeadmConfigReconciler_Reconcile_ErrorIfJoiningControlPlaneHasInvalidC
 		SecretCachingClient: myclient,
 		ClusterCache:        clustercache.NewFakeClusterCache(myclient, client.ObjectKey{Name: cluster.Name, Namespace: cluster.Namespace}),
 		KubeadmInitLock:     &myInitLocker{},
+		Provisioner:         cloudinit.NewProvisioner(),
 	}
 
 	request := ctrl.Request{
@@ -698,6 +702,7 @@ func TestReconcileIfJoinCertificatesAvailableConditioninNodesAndControlPlaneIsRe
 				SecretCachingClient: myclient,
 				ClusterCache:        clustercache.NewFakeClusterCache(myclient, client.ObjectKey{Name: cluster.Name, Namespace: cluster.Namespace}),
 				KubeadmInitLock:     &myInitLocker{},
+				Provisioner:         cloudinit.NewProvisioner(),
 			}
 
 			request := ctrl.Request{
@@ -775,6 +780,7 @@ func TestReconcileIfJoinNodePoolsAndControlPlaneIsReady(t *testing.T) {
 				SecretCachingClient: myclient,
 				ClusterCache:        clustercache.NewFakeClusterCache(myclient, client.ObjectKey{Name: cluster.Name, Namespace: cluster.Namespace}),
 				KubeadmInitLock:     &myInitLocker{},
+				Provisioner:         cloudinit.NewProvisioner(),
 			}
 
 			request := ctrl.Request{
@@ -877,6 +883,13 @@ func TestBootstrapDataFormat(t *testing.T) {
 				ClusterCache:        clustercache.NewFakeClusterCache(myclient, client.ObjectKey{Name: cluster.Name, Namespace: cluster.Namespace}),
 				KubeadmInitLock:     &myInitLocker{},
 			}
+
+			if tc.format == bootstrapv1.Ignition {
+				k.Provisioner = ignition.NewProvisioner()
+			} else {
+				k.Provisioner = cloudinit.NewProvisioner()
+			}
+
 			request := ctrl.Request{
 				NamespacedName: client.ObjectKey{
 					Namespace: metav1.NamespaceDefault,
@@ -918,7 +931,7 @@ func TestBootstrapDataFormat(t *testing.T) {
 				g.Expect(err).ToNot(HaveOccurred())
 			case bootstrapv1.Ignition:
 				// Verify the bootstrap data is valid Ignition.
-				_, reports, err := ignition.Parse(data)
+				_, reports, err := ignitionv2.Parse(data)
 				g.Expect(err).ToNot(HaveOccurred())
 				g.Expect(reports.IsFatal()).NotTo(BeTrue())
 			}
@@ -957,6 +970,7 @@ func TestKubeadmConfigSecretCreatedStatusNotPatched(t *testing.T) {
 		SecretCachingClient: myclient,
 		ClusterCache:        clustercache.NewFakeClusterCache(myclient, client.ObjectKey{Name: cluster.Name, Namespace: cluster.Namespace}),
 		KubeadmInitLock:     &myInitLocker{},
+		Provisioner:         cloudinit.NewProvisioner(),
 	}
 	request := ctrl.Request{
 		NamespacedName: client.ObjectKey{
@@ -1037,6 +1051,7 @@ func TestBootstrapTokenTTLExtension(t *testing.T) {
 		KubeadmInitLock:     &myInitLocker{},
 		TokenTTL:            DefaultTokenTTL,
 		ClusterCache:        clustercache.NewFakeClusterCache(remoteClient, client.ObjectKey{Name: cluster.Name, Namespace: cluster.Namespace}),
+		Provisioner:         cloudinit.NewProvisioner(),
 	}
 	request := ctrl.Request{
 		NamespacedName: client.ObjectKey{
@@ -1283,6 +1298,7 @@ func TestBootstrapTokenRotationMachinePool(t *testing.T) {
 		KubeadmInitLock:     &myInitLocker{},
 		TokenTTL:            DefaultTokenTTL,
 		ClusterCache:        clustercache.NewFakeClusterCache(remoteClient, client.ObjectKey{Name: cluster.Name, Namespace: cluster.Namespace}),
+		Provisioner:         cloudinit.NewProvisioner(),
 	}
 	request := ctrl.Request{
 		NamespacedName: client.ObjectKey{
@@ -2110,6 +2126,7 @@ func TestKubeadmConfigReconciler_Reconcile_ExactlyOneControlPlaneMachineInitiali
 		Client:              myclient,
 		SecretCachingClient: myclient,
 		KubeadmInitLock:     &myInitLocker{},
+		Provisioner:         cloudinit.NewProvisioner(),
 	}
 
 	request := ctrl.Request{
