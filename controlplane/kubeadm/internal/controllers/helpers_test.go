@@ -372,7 +372,10 @@ func TestCloneConfigsAndGenerateMachine(t *testing.T) {
 	}
 
 	bootstrapSpec := &bootstrapv1.KubeadmConfigSpec{
-		JoinConfiguration: &bootstrapv1.JoinConfiguration{},
+		KubeadmBaseConfig: bootstrapv1.KubeadmBaseConfig{
+			ClusterConfiguration: &bootstrapv1.ClusterConfiguration{},
+			JoinConfiguration:    &bootstrapv1.JoinConfiguration{},
+		},
 	}
 	g.Expect(r.cloneConfigsAndGenerateMachine(ctx, cluster, kcp, bootstrapSpec, nil)).To(Succeed())
 
@@ -458,7 +461,10 @@ func TestCloneConfigsAndGenerateMachineFail(t *testing.T) {
 	}
 
 	bootstrapSpec := &bootstrapv1.KubeadmConfigSpec{
-		JoinConfiguration: &bootstrapv1.JoinConfiguration{},
+		KubeadmBaseConfig: bootstrapv1.KubeadmBaseConfig{
+			ClusterConfiguration: &bootstrapv1.ClusterConfiguration{},
+			JoinConfiguration:    &bootstrapv1.JoinConfiguration{},
+		},
 	}
 
 	// Try to break Infra Cloning
@@ -534,8 +540,10 @@ func TestKubeadmControlPlaneReconciler_computeDesiredMachine(t *testing.T) {
 						NodeVolumeDetachTimeout: duration5s,
 					},
 					KubeadmConfigSpec: bootstrapv1.KubeadmConfigSpec{
-						ClusterConfiguration: &bootstrapv1.ClusterConfiguration{
-							ClusterName: clusterName,
+						KubeadmBaseConfig: bootstrapv1.KubeadmBaseConfig{
+							ClusterConfiguration: &bootstrapv1.ClusterConfiguration{
+								ClusterName: clusterName,
+							},
 						},
 					},
 					MachineNamingStrategy: &controlplanev1.MachineNamingStrategy{
@@ -566,8 +574,10 @@ func TestKubeadmControlPlaneReconciler_computeDesiredMachine(t *testing.T) {
 						NodeVolumeDetachTimeout: duration5s,
 					},
 					KubeadmConfigSpec: bootstrapv1.KubeadmConfigSpec{
-						ClusterConfiguration: &bootstrapv1.ClusterConfiguration{
-							ClusterName: clusterName,
+						KubeadmBaseConfig: bootstrapv1.KubeadmBaseConfig{
+							ClusterConfiguration: &bootstrapv1.ClusterConfiguration{
+								ClusterName: clusterName,
+							},
 						},
 					},
 					MachineNamingStrategy: &controlplanev1.MachineNamingStrategy{
@@ -594,8 +604,10 @@ func TestKubeadmControlPlaneReconciler_computeDesiredMachine(t *testing.T) {
 						NodeVolumeDetachTimeout: duration5s,
 					},
 					KubeadmConfigSpec: bootstrapv1.KubeadmConfigSpec{
-						ClusterConfiguration: &bootstrapv1.ClusterConfiguration{
-							ClusterName: clusterName,
+						KubeadmBaseConfig: bootstrapv1.KubeadmBaseConfig{
+							ClusterConfiguration: &bootstrapv1.ClusterConfiguration{
+								ClusterName: clusterName,
+							},
 						},
 					},
 					MachineNamingStrategy: &controlplanev1.MachineNamingStrategy{
@@ -626,8 +638,10 @@ func TestKubeadmControlPlaneReconciler_computeDesiredMachine(t *testing.T) {
 						NodeVolumeDetachTimeout: duration5s,
 					},
 					KubeadmConfigSpec: bootstrapv1.KubeadmConfigSpec{
-						ClusterConfiguration: &bootstrapv1.ClusterConfiguration{
-							ClusterName: clusterName,
+						KubeadmBaseConfig: bootstrapv1.KubeadmBaseConfig{
+							ClusterConfiguration: &bootstrapv1.ClusterConfiguration{
+								ClusterName: clusterName,
+							},
 						},
 					},
 					MachineNamingStrategy: &controlplanev1.MachineNamingStrategy{
@@ -654,8 +668,10 @@ func TestKubeadmControlPlaneReconciler_computeDesiredMachine(t *testing.T) {
 						NodeVolumeDetachTimeout: duration5s,
 					},
 					KubeadmConfigSpec: bootstrapv1.KubeadmConfigSpec{
-						ClusterConfiguration: &bootstrapv1.ClusterConfiguration{
-							ClusterName: clusterName,
+						KubeadmBaseConfig: bootstrapv1.KubeadmBaseConfig{
+							ClusterConfiguration: &bootstrapv1.ClusterConfiguration{
+								ClusterName: clusterName,
+							},
 						},
 					},
 				},
@@ -683,8 +699,10 @@ func TestKubeadmControlPlaneReconciler_computeDesiredMachine(t *testing.T) {
 						NodeVolumeDetachTimeout: duration5s,
 					},
 					KubeadmConfigSpec: bootstrapv1.KubeadmConfigSpec{
-						ClusterConfiguration: &bootstrapv1.ClusterConfiguration{
-							ClusterName: clusterName,
+						KubeadmBaseConfig: bootstrapv1.KubeadmBaseConfig{
+							ClusterConfiguration: &bootstrapv1.ClusterConfiguration{
+								ClusterName: clusterName,
+							},
 						},
 					},
 					MachineNamingStrategy: &controlplanev1.MachineNamingStrategy{

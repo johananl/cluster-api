@@ -844,8 +844,10 @@ func Test_setAvailableCondition(t *testing.T) {
 				KCP: &controlplanev1.KubeadmControlPlane{
 					Spec: controlplanev1.KubeadmControlPlaneSpec{
 						KubeadmConfigSpec: bootstrapv1.KubeadmConfigSpec{
-							ClusterConfiguration: &bootstrapv1.ClusterConfiguration{
-								Etcd: bootstrapv1.Etcd{Local: &bootstrapv1.LocalEtcd{}},
+							KubeadmBaseConfig: bootstrapv1.KubeadmBaseConfig{
+								ClusterConfiguration: &bootstrapv1.ClusterConfiguration{
+									Etcd: bootstrapv1.Etcd{Local: &bootstrapv1.LocalEtcd{}},
+								},
 							},
 						},
 					},
@@ -958,8 +960,10 @@ func Test_setAvailableCondition(t *testing.T) {
 				KCP: &controlplanev1.KubeadmControlPlane{
 					Spec: controlplanev1.KubeadmControlPlaneSpec{
 						KubeadmConfigSpec: bootstrapv1.KubeadmConfigSpec{
-							ClusterConfiguration: &bootstrapv1.ClusterConfiguration{
-								Etcd: bootstrapv1.Etcd{Local: &bootstrapv1.LocalEtcd{}},
+							KubeadmBaseConfig: bootstrapv1.KubeadmBaseConfig{
+								ClusterConfiguration: &bootstrapv1.ClusterConfiguration{
+									Etcd: bootstrapv1.Etcd{Local: &bootstrapv1.LocalEtcd{}},
+								},
 							},
 						},
 					},
@@ -987,8 +991,10 @@ func Test_setAvailableCondition(t *testing.T) {
 				KCP: &controlplanev1.KubeadmControlPlane{
 					Spec: controlplanev1.KubeadmControlPlaneSpec{
 						KubeadmConfigSpec: bootstrapv1.KubeadmConfigSpec{
-							ClusterConfiguration: &bootstrapv1.ClusterConfiguration{
-								Etcd: bootstrapv1.Etcd{Local: &bootstrapv1.LocalEtcd{}},
+							KubeadmBaseConfig: bootstrapv1.KubeadmBaseConfig{
+								ClusterConfiguration: &bootstrapv1.ClusterConfiguration{
+									Etcd: bootstrapv1.Etcd{Local: &bootstrapv1.LocalEtcd{}},
+								},
 							},
 						},
 					},
@@ -1016,8 +1022,10 @@ func Test_setAvailableCondition(t *testing.T) {
 				KCP: &controlplanev1.KubeadmControlPlane{
 					Spec: controlplanev1.KubeadmControlPlaneSpec{
 						KubeadmConfigSpec: bootstrapv1.KubeadmConfigSpec{
-							ClusterConfiguration: &bootstrapv1.ClusterConfiguration{
-								Etcd: bootstrapv1.Etcd{Local: &bootstrapv1.LocalEtcd{}},
+							KubeadmBaseConfig: bootstrapv1.KubeadmBaseConfig{
+								ClusterConfiguration: &bootstrapv1.ClusterConfiguration{
+									Etcd: bootstrapv1.Etcd{Local: &bootstrapv1.LocalEtcd{}},
+								},
 							},
 						},
 					},
@@ -1039,8 +1047,10 @@ func Test_setAvailableCondition(t *testing.T) {
 				KCP: &controlplanev1.KubeadmControlPlane{
 					Spec: controlplanev1.KubeadmControlPlaneSpec{
 						KubeadmConfigSpec: bootstrapv1.KubeadmConfigSpec{
-							ClusterConfiguration: &bootstrapv1.ClusterConfiguration{
-								Etcd: bootstrapv1.Etcd{Local: &bootstrapv1.LocalEtcd{}},
+							KubeadmBaseConfig: bootstrapv1.KubeadmBaseConfig{
+								ClusterConfiguration: &bootstrapv1.ClusterConfiguration{
+									Etcd: bootstrapv1.Etcd{Local: &bootstrapv1.LocalEtcd{}},
+								},
 							},
 						},
 					},
@@ -1063,8 +1073,10 @@ func Test_setAvailableCondition(t *testing.T) {
 				KCP: &controlplanev1.KubeadmControlPlane{
 					Spec: controlplanev1.KubeadmControlPlaneSpec{
 						KubeadmConfigSpec: bootstrapv1.KubeadmConfigSpec{
-							ClusterConfiguration: &bootstrapv1.ClusterConfiguration{
-								Etcd: bootstrapv1.Etcd{Local: &bootstrapv1.LocalEtcd{}},
+							KubeadmBaseConfig: bootstrapv1.KubeadmBaseConfig{
+								ClusterConfiguration: &bootstrapv1.ClusterConfiguration{
+									Etcd: bootstrapv1.Etcd{Local: &bootstrapv1.LocalEtcd{}},
+								},
 							},
 						},
 					},
@@ -1738,8 +1750,10 @@ func Test_setAvailableCondition(t *testing.T) {
 				KCP: &controlplanev1.KubeadmControlPlane{
 					Spec: controlplanev1.KubeadmControlPlaneSpec{
 						KubeadmConfigSpec: bootstrapv1.KubeadmConfigSpec{
-							ClusterConfiguration: &bootstrapv1.ClusterConfiguration{
-								Etcd: bootstrapv1.Etcd{External: &bootstrapv1.ExternalEtcd{}},
+							KubeadmBaseConfig: bootstrapv1.KubeadmBaseConfig{
+								ClusterConfiguration: &bootstrapv1.ClusterConfiguration{
+									Etcd: bootstrapv1.Etcd{External: &bootstrapv1.ExternalEtcd{}},
+								},
 							},
 						},
 					},
@@ -1785,8 +1799,10 @@ func Test_setAvailableCondition(t *testing.T) {
 				KCP: &controlplanev1.KubeadmControlPlane{
 					Spec: controlplanev1.KubeadmControlPlaneSpec{
 						KubeadmConfigSpec: bootstrapv1.KubeadmConfigSpec{
-							ClusterConfiguration: &bootstrapv1.ClusterConfiguration{
-								Etcd: bootstrapv1.Etcd{External: &bootstrapv1.ExternalEtcd{}},
+							KubeadmBaseConfig: bootstrapv1.KubeadmBaseConfig{
+								ClusterConfiguration: &bootstrapv1.ClusterConfiguration{
+									Etcd: bootstrapv1.Etcd{External: &bootstrapv1.ExternalEtcd{}},
+								},
 							},
 						},
 					},

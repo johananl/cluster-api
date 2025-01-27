@@ -72,39 +72,41 @@ func TestKubeadmControlPlaneValidateScale(t *testing.T) {
 				},
 			},
 			KubeadmConfigSpec: bootstrapv1.KubeadmConfigSpec{
-				InitConfiguration: &bootstrapv1.InitConfiguration{
-					LocalAPIEndpoint: bootstrapv1.APIEndpoint{
-						AdvertiseAddress: "127.0.0.1",
-						BindPort:         int32(443),
-					},
-					NodeRegistration: bootstrapv1.NodeRegistrationOptions{
-						Name: "kcp-managed-etcd",
-					},
-				},
-				ClusterConfiguration: &bootstrapv1.ClusterConfiguration{
-					ClusterName: "kcp-managed-etcd",
-					DNS: bootstrapv1.DNS{
-						ImageMeta: bootstrapv1.ImageMeta{
-							ImageRepository: "registry.k8s.io/coredns",
-							ImageTag:        "1.6.5",
+				KubeadmBaseConfig: bootstrapv1.KubeadmBaseConfig{
+					ClusterConfiguration: &bootstrapv1.ClusterConfiguration{
+						ClusterName: "kcp-managed-etcd",
+						DNS: bootstrapv1.DNS{
+							ImageMeta: bootstrapv1.ImageMeta{
+								ImageRepository: "registry.k8s.io/coredns",
+								ImageTag:        "1.6.5",
+							},
 						},
 					},
-				},
-				JoinConfiguration: &bootstrapv1.JoinConfiguration{
-					Discovery: bootstrapv1.Discovery{
-						Timeout: &metav1.Duration{
-							Duration: 10 * time.Minute,
+					InitConfiguration: &bootstrapv1.InitConfiguration{
+						LocalAPIEndpoint: bootstrapv1.APIEndpoint{
+							AdvertiseAddress: "127.0.0.1",
+							BindPort:         int32(443),
+						},
+						NodeRegistration: bootstrapv1.NodeRegistrationOptions{
+							Name: "kcp-managed-etcd",
 						},
 					},
-					NodeRegistration: bootstrapv1.NodeRegistrationOptions{
-						Name: "kcp-managed-etcd",
+					JoinConfiguration: &bootstrapv1.JoinConfiguration{
+						Discovery: bootstrapv1.Discovery{
+							Timeout: &metav1.Duration{
+								Duration: 10 * time.Minute,
+							},
+						},
+						NodeRegistration: bootstrapv1.NodeRegistrationOptions{
+							Name: "kcp-managed-etcd",
+						},
 					},
-				},
-				PreKubeadmCommands: []string{
-					"kcp-managed-etcd", "foo",
-				},
-				PostKubeadmCommands: []string{
-					"kcp-managed-etcd", "foo",
+					PreKubeadmCommands: []string{
+						"kcp-managed-etcd", "foo",
+					},
+					PostKubeadmCommands: []string{
+						"kcp-managed-etcd", "foo",
+					},
 				},
 				Files: []bootstrapv1.File{
 					{

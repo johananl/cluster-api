@@ -48,9 +48,9 @@ var (
 	pathConflictMsg                                  = "path property must be unique among all files"
 )
 
-// KubeadmConfigSpec defines the desired state of KubeadmConfig.
+// KubeadmBaseConfig defines common data among all types derived from KubeadmConfigSpec.
 // Either ClusterConfiguration and InitConfiguration should be defined or the JoinConfiguration should be defined.
-type KubeadmConfigSpec struct {
+type KubeadmBaseConfig struct {
 	// clusterConfiguration along with InitConfiguration are the configurations necessary for the init command
 	// +optional
 	ClusterConfiguration *ClusterConfiguration `json:"clusterConfiguration,omitempty"`
@@ -62,6 +62,28 @@ type KubeadmConfigSpec struct {
 	// joinConfiguration is the kubeadm configuration for the join command
 	// +optional
 	JoinConfiguration *JoinConfiguration `json:"joinConfiguration,omitempty"`
+
+	// preKubeadmCommands specifies extra commands to run before kubeadm runs
+	// +optional
+	PreKubeadmCommands []string `json:"preKubeadmCommands,omitempty"`
+
+	// postKubeadmCommands specifies extra commands to run after kubeadm runs
+	// +optional
+	PostKubeadmCommands []string `json:"postKubeadmCommands,omitempty"`
+
+	// format specifies the output format of the bootstrap data
+	// +optional
+	Format Format `json:"format,omitempty"`
+
+	// verbosity is the number for the kubeadm log level verbosity.
+	// It overrides the `--v` flag in kubeadm commands.
+	// +optional
+	Verbosity *int32 `json:"verbosity,omitempty"`
+}
+
+// KubeadmConfigSpec defines the desired state of KubeadmConfig.
+type KubeadmConfigSpec struct {
+	KubeadmBaseConfig `json:",inline"`
 
 	// files specifies extra files to be passed to user_data upon creation.
 	// +optional
@@ -75,14 +97,6 @@ type KubeadmConfigSpec struct {
 	// +optional
 	Mounts []MountPoints `json:"mounts,omitempty"`
 
-	// preKubeadmCommands specifies extra commands to run before kubeadm runs
-	// +optional
-	PreKubeadmCommands []string `json:"preKubeadmCommands,omitempty"`
-
-	// postKubeadmCommands specifies extra commands to run after kubeadm runs
-	// +optional
-	PostKubeadmCommands []string `json:"postKubeadmCommands,omitempty"`
-
 	// users specifies extra users to add
 	// +optional
 	Users []User `json:"users,omitempty"`
@@ -90,15 +104,6 @@ type KubeadmConfigSpec struct {
 	// ntp specifies NTP configuration
 	// +optional
 	NTP *NTP `json:"ntp,omitempty"`
-
-	// format specifies the output format of the bootstrap data
-	// +optional
-	Format Format `json:"format,omitempty"`
-
-	// verbosity is the number for the kubeadm log level verbosity.
-	// It overrides the `--v` flag in kubeadm commands.
-	// +optional
-	Verbosity *int32 `json:"verbosity,omitempty"`
 
 	// useExperimentalRetryJoin replaces a basic kubeadm command with a shell
 	// script with retries for joins.

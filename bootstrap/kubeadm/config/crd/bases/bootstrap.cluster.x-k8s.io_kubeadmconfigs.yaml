@@ -2041,9 +2041,7 @@ spec:
           metadata:
             type: object
           spec:
-            description: |-
-              KubeadmConfigSpec defines the desired state of KubeadmConfig.
-              Either ClusterConfiguration and InitConfiguration should be defined or the JoinConfiguration should be defined.
+            description: KubeadmConfigSpec defines the desired state of KubeadmConfig.
             properties:
               clusterConfiguration:
                 description: clusterConfiguration along with InitConfiguration are
