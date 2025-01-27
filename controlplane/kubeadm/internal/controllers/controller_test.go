@@ -1720,8 +1720,10 @@ func TestKubeadmControlPlaneReconciler_syncMachines(t *testing.T) {
 
 	// Existing KubeadmConfig
 	bootstrapSpec := &bootstrapv1.KubeadmConfigSpec{
-		Users:             []bootstrapv1.User{{Name: "test-user"}},
-		JoinConfiguration: &bootstrapv1.JoinConfiguration{},
+		Users: []bootstrapv1.User{{Name: "test-user"}},
+		KubeadmBaseConfig: bootstrapv1.KubeadmBaseConfig{
+			JoinConfiguration: &bootstrapv1.JoinConfiguration{},
+		},
 	}
 	existingKubeadmConfig := &bootstrapv1.KubeadmConfig{
 		TypeMeta: metav1.TypeMeta{
@@ -3086,10 +3088,12 @@ func TestKubeadmControlPlaneReconciler_reconcilePreTerminateHook(t *testing.T) {
 					Spec: controlplanev1.KubeadmControlPlaneSpec{
 						Version: "v1.31.0",
 						KubeadmConfigSpec: bootstrapv1.KubeadmConfigSpec{
-							ClusterConfiguration: &bootstrapv1.ClusterConfiguration{
-								Etcd: bootstrapv1.Etcd{
-									External: &bootstrapv1.ExternalEtcd{
-										Endpoints: []string{"1.2.3.4"}, // Etcd is not managed by KCP
+							KubeadmBaseConfig: bootstrapv1.KubeadmBaseConfig{
+								ClusterConfiguration: &bootstrapv1.ClusterConfiguration{
+									Etcd: bootstrapv1.Etcd{
+										External: &bootstrapv1.ExternalEtcd{
+											Endpoints: []string{"1.2.3.4"}, // Etcd is not managed by KCP
+										},
 									},
 								},
 							},
@@ -3209,11 +3213,13 @@ func TestKubeadmControlPlaneReconciler_updateCoreDNS(t *testing.T) {
 			Replicas: nil,
 			Version:  "v1.16.6",
 			KubeadmConfigSpec: bootstrapv1.KubeadmConfigSpec{
-				ClusterConfiguration: &bootstrapv1.ClusterConfiguration{
-					DNS: bootstrapv1.DNS{
-						ImageMeta: bootstrapv1.ImageMeta{
-							ImageRepository: "registry.k8s.io",
-							ImageTag:        "1.7.2",
+				KubeadmBaseConfig: bootstrapv1.KubeadmBaseConfig{
+					ClusterConfiguration: &bootstrapv1.ClusterConfiguration{
+						DNS: bootstrapv1.DNS{
+							ImageMeta: bootstrapv1.ImageMeta{
+								ImageRepository: "registry.k8s.io",
+								ImageTag:        "1.7.2",
+							},
 						},
 					},
 				},

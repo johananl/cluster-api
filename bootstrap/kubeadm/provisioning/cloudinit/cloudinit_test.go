@@ -351,7 +351,7 @@ func TestNewJoinControlPlaneCommands(t *testing.T) {
 		}
 	}
 
-	out, err := NewJoinControlPlane(cpinput)
+	out, err := controlPlaneJoinData(cpinput)
 	g.Expect(err).ToNot(HaveOccurred())
 
 	expectedBootCmd := `bootcmd:
@@ -371,7 +371,7 @@ func TestNewJoinControlPlaneCommands(t *testing.T) {
 func TestNewJoinNodeCommands(t *testing.T) {
 	g := NewWithT(t)
 
-	nodeinput := &NodeInput{
+	nodeinput := &WorkerJoinInput{
 		BaseUserData: BaseUserData{
 			Header:              "test",
 			BootCommands:        []string{"echo $(date)", "echo 'hello BootCommands!'"},
@@ -385,7 +385,7 @@ func TestNewJoinNodeCommands(t *testing.T) {
 		JoinConfiguration: "my-join-config",
 	}
 
-	out, err := NewNode(nodeinput)
+	out, err := workerJoinData(nodeinput)
 	g.Expect(err).ToNot(HaveOccurred())
 
 	expectedBootCmd := `bootcmd:

@@ -57,7 +57,9 @@ func TestKubeadmConfigDefault(t *testing.T) {
 			Namespace: "foo",
 		},
 		Spec: bootstrapv1.KubeadmConfigSpec{
-			Format: bootstrapv1.Ignition,
+			KubeadmBaseConfig: bootstrapv1.KubeadmBaseConfig{
+				Format: bootstrapv1.Ignition,
+			},
 		},
 	}
 	g.Expect(webhook.Default(ctx, ignitionKubeadmConfig)).To(Succeed())
@@ -298,7 +300,9 @@ func TestKubeadmConfigValidate(t *testing.T) {
 					Namespace: "default",
 				},
 				Spec: bootstrapv1.KubeadmConfigSpec{
-					Format: bootstrapv1.Ignition,
+					KubeadmBaseConfig: bootstrapv1.KubeadmBaseConfig{
+						Format: bootstrapv1.Ignition,
+					},
 				},
 			},
 		},
@@ -310,7 +314,9 @@ func TestKubeadmConfigValidate(t *testing.T) {
 					Namespace: "default",
 				},
 				Spec: bootstrapv1.KubeadmConfigSpec{
-					Format: bootstrapv1.Ignition,
+					KubeadmBaseConfig: bootstrapv1.KubeadmBaseConfig{
+						Format: bootstrapv1.Ignition,
+					},
 					Users: []bootstrapv1.User{
 						{
 							Inactive: ptr.To(true),
@@ -328,7 +334,9 @@ func TestKubeadmConfigValidate(t *testing.T) {
 					Namespace: "default",
 				},
 				Spec: bootstrapv1.KubeadmConfigSpec{
-					Format: bootstrapv1.Ignition,
+					KubeadmBaseConfig: bootstrapv1.KubeadmBaseConfig{
+						Format: bootstrapv1.Ignition,
+					},
 					DiskSetup: &bootstrapv1.DiskSetup{
 						Partitions: []bootstrapv1.Partition{
 							{
@@ -348,7 +356,9 @@ func TestKubeadmConfigValidate(t *testing.T) {
 					Namespace: "default",
 				},
 				Spec: bootstrapv1.KubeadmConfigSpec{
-					Format:                   bootstrapv1.Ignition,
+					KubeadmBaseConfig: bootstrapv1.KubeadmBaseConfig{
+						Format: bootstrapv1.Ignition,
+					},
 					UseExperimentalRetryJoin: true,
 				},
 			},
@@ -361,7 +371,9 @@ func TestKubeadmConfigValidate(t *testing.T) {
 					Namespace: "default",
 				},
 				Spec: bootstrapv1.KubeadmConfigSpec{
-					Format: bootstrapv1.Ignition,
+					KubeadmBaseConfig: bootstrapv1.KubeadmBaseConfig{
+						Format: bootstrapv1.Ignition,
+					},
 				},
 			},
 			expectErr: true,
@@ -373,7 +385,9 @@ func TestKubeadmConfigValidate(t *testing.T) {
 					Namespace: "default",
 				},
 				Spec: bootstrapv1.KubeadmConfigSpec{
-					Format: bootstrapv1.Ignition,
+					KubeadmBaseConfig: bootstrapv1.KubeadmBaseConfig{
+						Format: bootstrapv1.Ignition,
+					},
 					Ignition: &bootstrapv1.IgnitionSpec{
 						ContainerLinuxConfig: &bootstrapv1.ContainerLinuxConfig{},
 					},
@@ -389,7 +403,9 @@ func TestKubeadmConfigValidate(t *testing.T) {
 					Namespace: "default",
 				},
 				Spec: bootstrapv1.KubeadmConfigSpec{
-					Format: bootstrapv1.Ignition,
+					KubeadmBaseConfig: bootstrapv1.KubeadmBaseConfig{
+						Format: bootstrapv1.Ignition,
+					},
 					DiskSetup: &bootstrapv1.DiskSetup{
 						Filesystems: []bootstrapv1.Filesystem{
 							{
@@ -409,7 +425,9 @@ func TestKubeadmConfigValidate(t *testing.T) {
 					Namespace: "default",
 				},
 				Spec: bootstrapv1.KubeadmConfigSpec{
-					Format: bootstrapv1.Ignition,
+					KubeadmBaseConfig: bootstrapv1.KubeadmBaseConfig{
+						Format: bootstrapv1.Ignition,
+					},
 					DiskSetup: &bootstrapv1.DiskSetup{
 						Filesystems: []bootstrapv1.Filesystem{
 							{
@@ -429,7 +447,9 @@ func TestKubeadmConfigValidate(t *testing.T) {
 					Namespace: "default",
 				},
 				Spec: bootstrapv1.KubeadmConfigSpec{
-					Format: bootstrapv1.Ignition,
+					KubeadmBaseConfig: bootstrapv1.KubeadmBaseConfig{
+						Format: bootstrapv1.Ignition,
+					},
 					Files: []bootstrapv1.File{
 						{
 							Encoding: bootstrapv1.Gzip,
@@ -447,7 +467,9 @@ func TestKubeadmConfigValidate(t *testing.T) {
 					Namespace: "default",
 				},
 				Spec: bootstrapv1.KubeadmConfigSpec{
-					Format: bootstrapv1.Ignition,
+					KubeadmBaseConfig: bootstrapv1.KubeadmBaseConfig{
+						Format: bootstrapv1.Ignition,
+					},
 					Files: []bootstrapv1.File{
 						{
 							Encoding: bootstrapv1.GzipBase64,
@@ -465,7 +487,9 @@ func TestKubeadmConfigValidate(t *testing.T) {
 					Namespace: metav1.NamespaceDefault,
 				},
 				Spec: bootstrapv1.KubeadmConfigSpec{
-					Format:       bootstrapv1.Ignition,
+					KubeadmBaseConfig: bootstrapv1.KubeadmBaseConfig{
+						Format: bootstrapv1.Ignition,
+					},
 					BootCommands: []string{"echo $(date)", "echo 'hello BootCommands!'"},
 				},
 			},
@@ -478,7 +502,9 @@ func TestKubeadmConfigValidate(t *testing.T) {
 					Namespace: metav1.NamespaceDefault,
 				},
 				Spec: bootstrapv1.KubeadmConfigSpec{
-					Format:       bootstrapv1.CloudConfig,
+					KubeadmBaseConfig: bootstrapv1.KubeadmBaseConfig{
+						Format: bootstrapv1.CloudConfig,
+					},
 					BootCommands: []string{"echo $(date)", "echo 'hello BootCommands!'"},
 				},
 			},

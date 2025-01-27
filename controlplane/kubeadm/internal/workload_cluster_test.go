@@ -156,8 +156,10 @@ func TestUpdateKubeProxyImageInfo(t *testing.T) {
 				Spec: controlplanev1.KubeadmControlPlaneSpec{
 					Version: "v1.16.3",
 					KubeadmConfigSpec: bootstrapv1.KubeadmConfigSpec{
-						ClusterConfiguration: &bootstrapv1.ClusterConfiguration{
-							ImageRepository: "foo.bar.example/baz/qux",
+						KubeadmBaseConfig: bootstrapv1.KubeadmBaseConfig{
+							ClusterConfiguration: &bootstrapv1.ClusterConfiguration{
+								ImageRepository: "foo.bar.example/baz/qux",
+							},
 						},
 					},
 				}},
@@ -171,8 +173,10 @@ func TestUpdateKubeProxyImageInfo(t *testing.T) {
 				Spec: controlplanev1.KubeadmControlPlaneSpec{
 					Version: "v1.16.3",
 					KubeadmConfigSpec: bootstrapv1.KubeadmConfigSpec{
-						ClusterConfiguration: &bootstrapv1.ClusterConfiguration{
-							ImageRepository: "",
+						KubeadmBaseConfig: bootstrapv1.KubeadmBaseConfig{
+							ClusterConfiguration: &bootstrapv1.ClusterConfiguration{
+								ImageRepository: "",
+							},
 						},
 					},
 				}},
@@ -195,8 +199,10 @@ func TestUpdateKubeProxyImageInfo(t *testing.T) {
 				Spec: controlplanev1.KubeadmControlPlaneSpec{
 					Version: "v1.16.3",
 					KubeadmConfigSpec: bootstrapv1.KubeadmConfigSpec{
-						ClusterConfiguration: &bootstrapv1.ClusterConfiguration{
-							ImageRepository: "%%%",
+						KubeadmBaseConfig: bootstrapv1.KubeadmBaseConfig{
+							ClusterConfiguration: &bootstrapv1.ClusterConfiguration{
+								ImageRepository: "%%%",
+							},
 						},
 					},
 				}},
@@ -1279,7 +1285,17 @@ func TestUpdateFeatureGatesInKubeadmConfigMap(t *testing.T) {
 			w := &Workload{
 				Client: fakeClient,
 			}
-			err := w.UpdateClusterConfiguration(ctx, tt.kubernetesVersion, w.UpdateFeatureGatesInKubeadmConfigMap(bootstrapv1.KubeadmConfigSpec{ClusterConfiguration: tt.newClusterConfiguration}, tt.kubernetesVersion))
+			err := w.UpdateClusterConfiguration(ctx,
+				tt.kubernetesVersion,
+				w.UpdateFeatureGatesInKubeadmConfigMap(
+					bootstrapv1.KubeadmConfigSpec{
+						KubeadmBaseConfig: bootstrapv1.KubeadmBaseConfig{
+							ClusterConfiguration: tt.newClusterConfiguration,
+						},
+					},
+					tt.kubernetesVersion,
+				),
+			)
 			g.Expect(err).ToNot(HaveOccurred())
 
 			var actualConfig corev1.ConfigMap
@@ -1310,16 +1326,20 @@ func TestDefaultFeatureGates(t *testing.T) {
 			name:              "don't default ControlPlaneKubeletLocalMode for 1.30",
 			kubernetesVersion: semver.MustParse("1.30.99"),
 			kubeadmConfigSpec: &bootstrapv1.KubeadmConfigSpec{
-				ClusterConfiguration: &bootstrapv1.ClusterConfiguration{
-					FeatureGates: map[string]bool{
-						"EtcdLearnerMode": true,
+				KubeadmBaseConfig: bootstrapv1.KubeadmBaseConfig{
+					ClusterConfiguration: &bootstrapv1.ClusterConfiguration{
+						FeatureGates: map[string]bool{
+							"EtcdLearnerMode": true,
+						},
 					},
 				},
 			},
 			wantKubeadmConfigSpec: &bootstrapv1.KubeadmConfigSpec{
-				ClusterConfiguration: &bootstrapv1.ClusterConfiguration{
-					FeatureGates: map[string]bool{
-						"EtcdLearnerMode": true,
+				KubeadmBaseConfig: bootstrapv1.KubeadmBaseConfig{
+					ClusterConfiguration: &bootstrapv1.ClusterConfiguration{
+						FeatureGates: map[string]bool{
+							"EtcdLearnerMode": true,
+						},
 					},
 				},
 			},
@@ -1328,12 +1348,16 @@ func TestDefaultFeatureGates(t *testing.T) {
 			name:              "default ControlPlaneKubeletLocalMode for 1.31",
 			kubernetesVersion: semver.MustParse("1.31.0"),
 			kubeadmConfigSpec: &bootstrapv1.KubeadmConfigSpec{
-				ClusterConfiguration: nil,
+				KubeadmBaseConfig: bootstrapv1.KubeadmBaseConfig{
+					ClusterConfiguration: nil,
+				},
 			},
 			wantKubeadmConfigSpec: &bootstrapv1.KubeadmConfigSpec{
-				ClusterConfiguration: &bootstrapv1.ClusterConfiguration{
-					FeatureGates: map[string]bool{
-						ControlPlaneKubeletLocalMode: true,
+				KubeadmBaseConfig: bootstrapv1.KubeadmBaseConfig{
+					ClusterConfiguration: &bootstrapv1.ClusterConfiguration{
+						FeatureGates: map[string]bool{
+							ControlPlaneKubeletLocalMode: true,
+						},
 					},
 				},
 			},
@@ -1342,14 +1366,18 @@ func TestDefaultFeatureGates(t *testing.T) {
 			name:              "default ControlPlaneKubeletLocalMode for 1.31",
 			kubernetesVersion: semver.MustParse("1.31.0"),
 			kubeadmConfigSpec: &bootstrapv1.KubeadmConfigSpec{
-				ClusterConfiguration: &bootstrapv1.ClusterConfiguration{
-					FeatureGates: nil,
+				KubeadmBaseConfig: bootstrapv1.KubeadmBaseConfig{
+					ClusterConfiguration: &bootstrapv1.ClusterConfiguration{
+						FeatureGates: nil,
+					},
 				},
 			},
 			wantKubeadmConfigSpec: &bootstrapv1.KubeadmConfigSpec{
-				ClusterConfiguration: &bootstrapv1.ClusterConfiguration{
-					FeatureGates: map[string]bool{
-						ControlPlaneKubeletLocalMode: true,
+				KubeadmBaseConfig: bootstrapv1.KubeadmBaseConfig{
+					ClusterConfiguration: &bootstrapv1.ClusterConfiguration{
+						FeatureGates: map[string]bool{
+							ControlPlaneKubeletLocalMode: true,
+						},
 					},
 				},
 			},
@@ -1358,14 +1386,18 @@ func TestDefaultFeatureGates(t *testing.T) {
 			name:              "default ControlPlaneKubeletLocalMode for 1.31",
 			kubernetesVersion: semver.MustParse("1.31.0"),
 			kubeadmConfigSpec: &bootstrapv1.KubeadmConfigSpec{
-				ClusterConfiguration: &bootstrapv1.ClusterConfiguration{
-					FeatureGates: map[string]bool{},
+				KubeadmBaseConfig: bootstrapv1.KubeadmBaseConfig{
+					ClusterConfiguration: &bootstrapv1.ClusterConfiguration{
+						FeatureGates: map[string]bool{},
+					},
 				},
 			},
 			wantKubeadmConfigSpec: &bootstrapv1.KubeadmConfigSpec{
-				ClusterConfiguration: &bootstrapv1.ClusterConfiguration{
-					FeatureGates: map[string]bool{
-						ControlPlaneKubeletLocalMode: true,
+				KubeadmBaseConfig: bootstrapv1.KubeadmBaseConfig{
+					ClusterConfiguration: &bootstrapv1.ClusterConfiguration{
+						FeatureGates: map[string]bool{
+							ControlPlaneKubeletLocalMode: true,
+						},
 					},
 				},
 			},
@@ -1374,17 +1406,21 @@ func TestDefaultFeatureGates(t *testing.T) {
 			name:              "default ControlPlaneKubeletLocalMode for 1.31",
 			kubernetesVersion: semver.MustParse("1.31.0"),
 			kubeadmConfigSpec: &bootstrapv1.KubeadmConfigSpec{
-				ClusterConfiguration: &bootstrapv1.ClusterConfiguration{
-					FeatureGates: map[string]bool{
-						"EtcdLearnerMode": true,
+				KubeadmBaseConfig: bootstrapv1.KubeadmBaseConfig{
+					ClusterConfiguration: &bootstrapv1.ClusterConfiguration{
+						FeatureGates: map[string]bool{
+							"EtcdLearnerMode": true,
+						},
 					},
 				},
 			},
 			wantKubeadmConfigSpec: &bootstrapv1.KubeadmConfigSpec{
-				ClusterConfiguration: &bootstrapv1.ClusterConfiguration{
-					FeatureGates: map[string]bool{
-						ControlPlaneKubeletLocalMode: true,
-						"EtcdLearnerMode":            true,
+				KubeadmBaseConfig: bootstrapv1.KubeadmBaseConfig{
+					ClusterConfiguration: &bootstrapv1.ClusterConfiguration{
+						FeatureGates: map[string]bool{
+							ControlPlaneKubeletLocalMode: true,
+							"EtcdLearnerMode":            true,
+						},
 					},
 				},
 			},
@@ -1393,16 +1429,20 @@ func TestDefaultFeatureGates(t *testing.T) {
 			name:              "don't default ControlPlaneKubeletLocalMode for 1.31 if already set to false",
 			kubernetesVersion: semver.MustParse("1.31.0"),
 			kubeadmConfigSpec: &bootstrapv1.KubeadmConfigSpec{
-				ClusterConfiguration: &bootstrapv1.ClusterConfiguration{
-					FeatureGates: map[string]bool{
-						ControlPlaneKubeletLocalMode: false,
+				KubeadmBaseConfig: bootstrapv1.KubeadmBaseConfig{
+					ClusterConfiguration: &bootstrapv1.ClusterConfiguration{
+						FeatureGates: map[string]bool{
+							ControlPlaneKubeletLocalMode: false,
+						},
 					},
 				},
 			},
 			wantKubeadmConfigSpec: &bootstrapv1.KubeadmConfigSpec{
-				ClusterConfiguration: &bootstrapv1.ClusterConfiguration{
-					FeatureGates: map[string]bool{
-						ControlPlaneKubeletLocalMode: false,
+				KubeadmBaseConfig: bootstrapv1.KubeadmBaseConfig{
+					ClusterConfiguration: &bootstrapv1.ClusterConfiguration{
+						FeatureGates: map[string]bool{
+							ControlPlaneKubeletLocalMode: false,
+						},
 					},
 				},
 			},
