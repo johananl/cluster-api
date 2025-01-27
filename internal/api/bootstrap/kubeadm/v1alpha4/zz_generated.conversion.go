@@ -1048,33 +1048,9 @@ func Convert_v1beta2_KubeadmConfigList_To_v1alpha4_KubeadmConfigList(in *v1beta2
 }
 
 func autoConvert_v1alpha4_KubeadmConfigSpec_To_v1beta2_KubeadmConfigSpec(in *KubeadmConfigSpec, out *v1beta2.KubeadmConfigSpec, s conversion.Scope) error {
-	if in.ClusterConfiguration != nil {
-		in, out := &in.ClusterConfiguration, &out.ClusterConfiguration
-		*out = new(v1beta2.ClusterConfiguration)
-		if err := Convert_v1alpha4_ClusterConfiguration_To_v1beta2_ClusterConfiguration(*in, *out, s); err != nil {
-			return err
-		}
-	} else {
-		out.ClusterConfiguration = nil
-	}
-	if in.InitConfiguration != nil {
-		in, out := &in.InitConfiguration, &out.InitConfiguration
-		*out = new(v1beta2.InitConfiguration)
-		if err := Convert_v1alpha4_InitConfiguration_To_v1beta2_InitConfiguration(*in, *out, s); err != nil {
-			return err
-		}
-	} else {
-		out.InitConfiguration = nil
-	}
-	if in.JoinConfiguration != nil {
-		in, out := &in.JoinConfiguration, &out.JoinConfiguration
-		*out = new(v1beta2.JoinConfiguration)
-		if err := Convert_v1alpha4_JoinConfiguration_To_v1beta2_JoinConfiguration(*in, *out, s); err != nil {
-			return err
-		}
-	} else {
-		out.JoinConfiguration = nil
-	}
+	// WARNING: in.ClusterConfiguration requires manual conversion: does not exist in peer-type
+	// WARNING: in.InitConfiguration requires manual conversion: does not exist in peer-type
+	// WARNING: in.JoinConfiguration requires manual conversion: does not exist in peer-type
 	if in.Files != nil {
 		in, out := &in.Files, &out.Files
 		*out = make([]v1beta2.File, len(*in))
@@ -1088,8 +1064,8 @@ func autoConvert_v1alpha4_KubeadmConfigSpec_To_v1beta2_KubeadmConfigSpec(in *Kub
 	}
 	out.DiskSetup = (*v1beta2.DiskSetup)(unsafe.Pointer(in.DiskSetup))
 	out.Mounts = *(*[]v1beta2.MountPoints)(unsafe.Pointer(&in.Mounts))
-	out.PreKubeadmCommands = *(*[]string)(unsafe.Pointer(&in.PreKubeadmCommands))
-	out.PostKubeadmCommands = *(*[]string)(unsafe.Pointer(&in.PostKubeadmCommands))
+	// WARNING: in.PreKubeadmCommands requires manual conversion: does not exist in peer-type
+	// WARNING: in.PostKubeadmCommands requires manual conversion: does not exist in peer-type
 	if in.Users != nil {
 		in, out := &in.Users, &out.Users
 		*out = make([]v1beta2.User, len(*in))
@@ -1102,40 +1078,14 @@ func autoConvert_v1alpha4_KubeadmConfigSpec_To_v1beta2_KubeadmConfigSpec(in *Kub
 		out.Users = nil
 	}
 	out.NTP = (*v1beta2.NTP)(unsafe.Pointer(in.NTP))
-	out.Format = v1beta2.Format(in.Format)
-	out.Verbosity = (*int32)(unsafe.Pointer(in.Verbosity))
+	// WARNING: in.Format requires manual conversion: does not exist in peer-type
+	// WARNING: in.Verbosity requires manual conversion: does not exist in peer-type
 	// WARNING: in.UseExperimentalRetryJoin requires manual conversion: does not exist in peer-type
 	return nil
 }
 
 func autoConvert_v1beta2_KubeadmConfigSpec_To_v1alpha4_KubeadmConfigSpec(in *v1beta2.KubeadmConfigSpec, out *KubeadmConfigSpec, s conversion.Scope) error {
-	if in.ClusterConfiguration != nil {
-		in, out := &in.ClusterConfiguration, &out.ClusterConfiguration
-		*out = new(ClusterConfiguration)
-		if err := Convert_v1beta2_ClusterConfiguration_To_v1alpha4_ClusterConfiguration(*in, *out, s); err != nil {
-			return err
-		}
-	} else {
-		out.ClusterConfiguration = nil
-	}
-	if in.InitConfiguration != nil {
-		in, out := &in.InitConfiguration, &out.InitConfiguration
-		*out = new(InitConfiguration)
-		if err := Convert_v1beta2_InitConfiguration_To_v1alpha4_InitConfiguration(*in, *out, s); err != nil {
-			return err
-		}
-	} else {
-		out.InitConfiguration = nil
-	}
-	if in.JoinConfiguration != nil {
-		in, out := &in.JoinConfiguration, &out.JoinConfiguration
-		*out = new(JoinConfiguration)
-		if err := Convert_v1beta2_JoinConfiguration_To_v1alpha4_JoinConfiguration(*in, *out, s); err != nil {
-			return err
-		}
-	} else {
-		out.JoinConfiguration = nil
-	}
+	// WARNING: in.KubeadmBaseConfig requires manual conversion: does not exist in peer-type
 	if in.Files != nil {
 		in, out := &in.Files, &out.Files
 		*out = make([]File, len(*in))
@@ -1150,8 +1100,6 @@ func autoConvert_v1beta2_KubeadmConfigSpec_To_v1alpha4_KubeadmConfigSpec(in *v1b
 	out.DiskSetup = (*DiskSetup)(unsafe.Pointer(in.DiskSetup))
 	out.Mounts = *(*[]MountPoints)(unsafe.Pointer(&in.Mounts))
 	// WARNING: in.BootCommands requires manual conversion: does not exist in peer-type
-	out.PreKubeadmCommands = *(*[]string)(unsafe.Pointer(&in.PreKubeadmCommands))
-	out.PostKubeadmCommands = *(*[]string)(unsafe.Pointer(&in.PostKubeadmCommands))
 	if in.Users != nil {
 		in, out := &in.Users, &out.Users
 		*out = make([]User, len(*in))
@@ -1164,8 +1112,6 @@ func autoConvert_v1beta2_KubeadmConfigSpec_To_v1alpha4_KubeadmConfigSpec(in *v1b
 		out.Users = nil
 	}
 	out.NTP = (*NTP)(unsafe.Pointer(in.NTP))
-	out.Format = Format(in.Format)
-	out.Verbosity = (*int32)(unsafe.Pointer(in.Verbosity))
 	// WARNING: in.Ignition requires manual conversion: does not exist in peer-type
 	return nil
 }

@@ -175,6 +175,42 @@ func Convert_v1beta2_JoinConfiguration_To_v1beta1_JoinConfiguration(in *bootstra
 	return autoConvert_v1beta2_JoinConfiguration_To_v1beta1_JoinConfiguration(in, out, s)
 }
 
+func Convert_v1beta2_KubeadmConfigSpec_To_v1beta1_KubeadmConfigSpec(in *bootstrapv1.KubeadmConfigSpec, out *KubeadmConfigSpec, s apimachineryconversion.Scope) error {
+	if in.ClusterConfiguration != nil {
+		out.ClusterConfiguration = &ClusterConfiguration{}
+		if err := Convert_v1beta2_ClusterConfiguration_To_v1beta1_ClusterConfiguration(in.ClusterConfiguration, out.ClusterConfiguration, s); err != nil {
+			return err
+		}
+	} else {
+		out.ClusterConfiguration = nil
+	}
+
+	if in.InitConfiguration != nil {
+		out.InitConfiguration = &InitConfiguration{}
+		if err := Convert_v1beta2_InitConfiguration_To_v1beta1_InitConfiguration(in.InitConfiguration, out.InitConfiguration, s); err != nil {
+			return err
+		}
+	} else {
+		out.InitConfiguration = nil
+	}
+
+	if in.JoinConfiguration != nil {
+		out.JoinConfiguration = &JoinConfiguration{}
+		if err := Convert_v1beta2_JoinConfiguration_To_v1beta1_JoinConfiguration(in.JoinConfiguration, out.JoinConfiguration, s); err != nil {
+			return err
+		}
+	} else {
+		out.JoinConfiguration = nil
+	}
+
+	out.PreKubeadmCommands = in.PreKubeadmCommands
+	out.PostKubeadmCommands = in.PostKubeadmCommands
+	out.Format = Format(in.Format)
+	out.Verbosity = in.Verbosity
+
+	return autoConvert_v1beta2_KubeadmConfigSpec_To_v1beta1_KubeadmConfigSpec(in, out, s)
+}
+
 func Convert_v1beta2_KubeadmConfigStatus_To_v1beta1_KubeadmConfigStatus(in *bootstrapv1.KubeadmConfigStatus, out *KubeadmConfigStatus, s apimachineryconversion.Scope) error {
 	if err := autoConvert_v1beta2_KubeadmConfigStatus_To_v1beta1_KubeadmConfigStatus(in, out, s); err != nil {
 		return err
@@ -245,6 +281,39 @@ func Convert_v1beta1_Discovery_To_v1beta2_Discovery(in *Discovery, out *bootstra
 
 func Convert_v1beta1_KubeadmConfigSpec_To_v1beta2_KubeadmConfigSpec(in *KubeadmConfigSpec, out *bootstrapv1.KubeadmConfigSpec, s apimachineryconversion.Scope) error {
 	// NOTE: v1beta2 KubeadmConfigSpec does not have UseExperimentalRetryJoin anymore, so it's fine to just lose this field.
+
+	if in.ClusterConfiguration != nil {
+		out.ClusterConfiguration = &bootstrapv1.ClusterConfiguration{}
+		if err := Convert_v1beta1_ClusterConfiguration_To_v1beta2_ClusterConfiguration(in.ClusterConfiguration, out.ClusterConfiguration, s); err != nil {
+			return err
+		}
+	} else {
+		out.ClusterConfiguration = nil
+	}
+
+	if in.InitConfiguration != nil {
+		out.InitConfiguration = &bootstrapv1.InitConfiguration{}
+		if err := Convert_v1beta1_InitConfiguration_To_v1beta2_InitConfiguration(in.InitConfiguration, out.InitConfiguration, s); err != nil {
+			return err
+		}
+	} else {
+		out.InitConfiguration = nil
+	}
+
+	if in.JoinConfiguration != nil {
+		out.JoinConfiguration = &bootstrapv1.JoinConfiguration{}
+		if err := Convert_v1beta1_JoinConfiguration_To_v1beta2_JoinConfiguration(in.JoinConfiguration, out.JoinConfiguration, s); err != nil {
+			return err
+		}
+	} else {
+		out.JoinConfiguration = nil
+	}
+
+	out.PreKubeadmCommands = in.PreKubeadmCommands
+	out.PostKubeadmCommands = in.PostKubeadmCommands
+	out.Format = bootstrapv1.Format(in.Format)
+	out.Verbosity = in.Verbosity
+
 	return autoConvert_v1beta1_KubeadmConfigSpec_To_v1beta2_KubeadmConfigSpec(in, out, s)
 }
 

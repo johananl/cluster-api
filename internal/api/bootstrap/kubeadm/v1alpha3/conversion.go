@@ -270,6 +270,39 @@ func (dst *KubeadmConfigTemplate) ConvertFrom(srcRaw conversion.Hub) error {
 
 func Convert_v1alpha3_KubeadmConfigSpec_To_v1beta2_KubeadmConfigSpec(in *KubeadmConfigSpec, out *bootstrapv1.KubeadmConfigSpec, s apimachineryconversion.Scope) error {
 	// NOTE: v1beta2 KubeadmConfigSpec does not have UseExperimentalRetryJoin anymore, so it's fine to just lose this field.
+
+	if in.ClusterConfiguration != nil {
+		out.ClusterConfiguration = &bootstrapv1.ClusterConfiguration{}
+		if err := Convert_v1alpha3_ClusterConfiguration_To_v1beta2_ClusterConfiguration(in.ClusterConfiguration, out.ClusterConfiguration, s); err != nil {
+			return err
+		}
+	} else {
+		out.ClusterConfiguration = nil
+	}
+
+	if in.InitConfiguration != nil {
+		out.InitConfiguration = &bootstrapv1.InitConfiguration{}
+		if err := Convert_v1alpha3_InitConfiguration_To_v1beta2_InitConfiguration(in.InitConfiguration, out.InitConfiguration, s); err != nil {
+			return err
+		}
+	} else {
+		out.InitConfiguration = nil
+	}
+
+	if in.JoinConfiguration != nil {
+		out.JoinConfiguration = &bootstrapv1.JoinConfiguration{}
+		if err := Convert_v1alpha3_JoinConfiguration_To_v1beta2_JoinConfiguration(in.JoinConfiguration, out.JoinConfiguration, s); err != nil {
+			return err
+		}
+	} else {
+		out.JoinConfiguration = nil
+	}
+
+	out.PreKubeadmCommands = in.PreKubeadmCommands
+	out.PostKubeadmCommands = in.PostKubeadmCommands
+	out.Format = bootstrapv1.Format(in.Format)
+	out.Verbosity = in.Verbosity
+
 	return autoConvert_v1alpha3_KubeadmConfigSpec_To_v1beta2_KubeadmConfigSpec(in, out, s)
 }
 
@@ -288,6 +321,39 @@ func Convert_v1alpha3_BootstrapToken_To_v1beta2_BootstrapToken(in *BootstrapToke
 
 func Convert_v1beta2_KubeadmConfigSpec_To_v1alpha3_KubeadmConfigSpec(in *bootstrapv1.KubeadmConfigSpec, out *KubeadmConfigSpec, s apimachineryconversion.Scope) error {
 	// KubeadmConfigSpec.Ignition does not exist in kubeadm v1alpha3 API.
+
+	if in.ClusterConfiguration != nil {
+		out.ClusterConfiguration = &ClusterConfiguration{}
+		if err := Convert_v1beta2_ClusterConfiguration_To_v1alpha3_ClusterConfiguration(in.ClusterConfiguration, out.ClusterConfiguration, s); err != nil {
+			return err
+		}
+	} else {
+		out.ClusterConfiguration = nil
+	}
+
+	if in.InitConfiguration != nil {
+		out.InitConfiguration = &InitConfiguration{}
+		if err := Convert_v1beta2_InitConfiguration_To_v1alpha3_InitConfiguration(in.InitConfiguration, out.InitConfiguration, s); err != nil {
+			return err
+		}
+	} else {
+		out.InitConfiguration = nil
+	}
+
+	if in.JoinConfiguration != nil {
+		out.JoinConfiguration = &JoinConfiguration{}
+		if err := Convert_v1beta2_JoinConfiguration_To_v1alpha3_JoinConfiguration(in.JoinConfiguration, out.JoinConfiguration, s); err != nil {
+			return err
+		}
+	} else {
+		out.JoinConfiguration = nil
+	}
+
+	out.PreKubeadmCommands = in.PreKubeadmCommands
+	out.PostKubeadmCommands = in.PostKubeadmCommands
+	out.Format = Format(in.Format)
+	out.Verbosity = in.Verbosity
+
 	return autoConvert_v1beta2_KubeadmConfigSpec_To_v1alpha3_KubeadmConfigSpec(in, out, s)
 }
 

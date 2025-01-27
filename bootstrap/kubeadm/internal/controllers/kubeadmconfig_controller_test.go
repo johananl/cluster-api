@@ -1643,8 +1643,10 @@ func TestKubeadmConfigReconciler_Reconcile_DiscoveryReconcileBehaviors(t *testin
 			cluster: goodcluster,
 			config: &bootstrapv1.KubeadmConfig{
 				Spec: bootstrapv1.KubeadmConfigSpec{
-					JoinConfiguration: &bootstrapv1.JoinConfiguration{
-						Discovery: bootstrapToken,
+					KubeadmBaseConfig: bootstrapv1.KubeadmBaseConfig{
+						JoinConfiguration: &bootstrapv1.JoinConfiguration{
+							Discovery: bootstrapToken,
+						},
 					},
 				},
 			},
@@ -1662,9 +1664,11 @@ func TestKubeadmConfigReconciler_Reconcile_DiscoveryReconcileBehaviors(t *testin
 			cluster: goodcluster,
 			config: &bootstrapv1.KubeadmConfig{
 				Spec: bootstrapv1.KubeadmConfigSpec{
-					JoinConfiguration: &bootstrapv1.JoinConfiguration{
-						Discovery: bootstrapv1.Discovery{
-							File: &bootstrapv1.FileDiscovery{},
+					KubeadmBaseConfig: bootstrapv1.KubeadmBaseConfig{
+						JoinConfiguration: &bootstrapv1.JoinConfiguration{
+							Discovery: bootstrapv1.Discovery{
+								File: &bootstrapv1.FileDiscovery{},
+							},
 						},
 					},
 				},
@@ -1680,14 +1684,16 @@ func TestKubeadmConfigReconciler_Reconcile_DiscoveryReconcileBehaviors(t *testin
 			cluster: goodcluster,
 			config: &bootstrapv1.KubeadmConfig{
 				Spec: bootstrapv1.KubeadmConfigSpec{
-					JoinConfiguration: &bootstrapv1.JoinConfiguration{
-						Discovery: bootstrapv1.Discovery{
-							File: &bootstrapv1.FileDiscovery{
-								KubeConfigPath: "/bootstrap-kubeconfig.yaml",
-								KubeConfig: &bootstrapv1.FileDiscoveryKubeConfig{
-									User: bootstrapv1.KubeConfigUser{
-										Exec: &bootstrapv1.KubeConfigAuthExec{
-											Command: "/bootstrap",
+					KubeadmBaseConfig: bootstrapv1.KubeadmBaseConfig{
+						JoinConfiguration: &bootstrapv1.JoinConfiguration{
+							Discovery: bootstrapv1.Discovery{
+								File: &bootstrapv1.FileDiscovery{
+									KubeConfigPath: "/bootstrap-kubeconfig.yaml",
+									KubeConfig: &bootstrapv1.FileDiscoveryKubeConfig{
+										User: bootstrapv1.KubeConfigUser{
+											Exec: &bootstrapv1.KubeConfigAuthExec{
+												Command: "/bootstrap",
+											},
 										},
 									},
 								},
@@ -1711,11 +1717,13 @@ func TestKubeadmConfigReconciler_Reconcile_DiscoveryReconcileBehaviors(t *testin
 			cluster: goodcluster,
 			config: &bootstrapv1.KubeadmConfig{
 				Spec: bootstrapv1.KubeadmConfigSpec{
-					JoinConfiguration: &bootstrapv1.JoinConfiguration{
-						Discovery: bootstrapv1.Discovery{
-							BootstrapToken: &bootstrapv1.BootstrapTokenDiscovery{
-								CACertHashes:      caHash,
-								APIServerEndpoint: "bar.com:6443",
+					KubeadmBaseConfig: bootstrapv1.KubeadmBaseConfig{
+						JoinConfiguration: &bootstrapv1.JoinConfiguration{
+							Discovery: bootstrapv1.Discovery{
+								BootstrapToken: &bootstrapv1.BootstrapTokenDiscovery{
+									CACertHashes:      caHash,
+									APIServerEndpoint: "bar.com:6443",
+								},
 							},
 						},
 					},
@@ -1732,11 +1740,13 @@ func TestKubeadmConfigReconciler_Reconcile_DiscoveryReconcileBehaviors(t *testin
 			cluster: goodcluster,
 			config: &bootstrapv1.KubeadmConfig{
 				Spec: bootstrapv1.KubeadmConfigSpec{
-					JoinConfiguration: &bootstrapv1.JoinConfiguration{
-						Discovery: bootstrapv1.Discovery{
-							BootstrapToken: &bootstrapv1.BootstrapTokenDiscovery{
-								CACertHashes: caHash,
-								Token:        "abcdef.0123456789abcdef",
+					KubeadmBaseConfig: bootstrapv1.KubeadmBaseConfig{
+						JoinConfiguration: &bootstrapv1.JoinConfiguration{
+							Discovery: bootstrapv1.Discovery{
+								BootstrapToken: &bootstrapv1.BootstrapTokenDiscovery{
+									CACertHashes: caHash,
+									Token:        "abcdef.0123456789abcdef",
+								},
 							},
 						},
 					},
@@ -1753,10 +1763,12 @@ func TestKubeadmConfigReconciler_Reconcile_DiscoveryReconcileBehaviors(t *testin
 			cluster: goodcluster,
 			config: &bootstrapv1.KubeadmConfig{
 				Spec: bootstrapv1.KubeadmConfigSpec{
-					JoinConfiguration: &bootstrapv1.JoinConfiguration{
-						Discovery: bootstrapv1.Discovery{
-							BootstrapToken: &bootstrapv1.BootstrapTokenDiscovery{
-								CACertHashes: caHash,
+					KubeadmBaseConfig: bootstrapv1.KubeadmBaseConfig{
+						JoinConfiguration: &bootstrapv1.JoinConfiguration{
+							Discovery: bootstrapv1.Discovery{
+								BootstrapToken: &bootstrapv1.BootstrapTokenDiscovery{
+									CACertHashes: caHash,
+								},
 							},
 						},
 					},
@@ -1817,10 +1829,12 @@ func TestKubeadmConfigReconciler_Reconcile_DiscoveryReconcileFailureBehaviors(t 
 			cluster: &clusterv1.Cluster{}, // cluster without endpoints
 			config: &bootstrapv1.KubeadmConfig{
 				Spec: bootstrapv1.KubeadmConfigSpec{
-					JoinConfiguration: &bootstrapv1.JoinConfiguration{
-						Discovery: bootstrapv1.Discovery{
-							BootstrapToken: &bootstrapv1.BootstrapTokenDiscovery{
-								CACertHashes: []string{"item"},
+					KubeadmBaseConfig: bootstrapv1.KubeadmBaseConfig{
+						JoinConfiguration: &bootstrapv1.JoinConfiguration{
+							Discovery: bootstrapv1.Discovery{
+								BootstrapToken: &bootstrapv1.BootstrapTokenDiscovery{
+									CACertHashes: []string{"item"},
+								},
 							},
 						},
 					},
@@ -2340,17 +2354,19 @@ func TestKubeadmConfigReconciler_ResolveDiscoveryFileKubeConfig(t *testing.T) {
 		"should generate the bootstrap kubeconfig correctly": {
 			cfg: &bootstrapv1.KubeadmConfig{
 				Spec: bootstrapv1.KubeadmConfigSpec{
-					JoinConfiguration: &bootstrapv1.JoinConfiguration{
-						Discovery: bootstrapv1.Discovery{
-							File: &bootstrapv1.FileDiscovery{
-								KubeConfigPath: "/bootstrap-kubeconfig.yaml",
-								KubeConfig: &bootstrapv1.FileDiscoveryKubeConfig{
-									User: bootstrapv1.KubeConfigUser{
-										Exec: &bootstrapv1.KubeConfigAuthExec{
-											APIVersion: "client.authentication.k8s.io/v1",
-											Command:    "/usr/bin/bootstrap",
-											Env: []bootstrapv1.KubeConfigAuthExecEnv{
-												{Name: "ENV_TEST", Value: "value"},
+					KubeadmBaseConfig: bootstrapv1.KubeadmBaseConfig{
+						JoinConfiguration: &bootstrapv1.JoinConfiguration{
+							Discovery: bootstrapv1.Discovery{
+								File: &bootstrapv1.FileDiscovery{
+									KubeConfigPath: "/bootstrap-kubeconfig.yaml",
+									KubeConfig: &bootstrapv1.FileDiscoveryKubeConfig{
+										User: bootstrapv1.KubeConfigUser{
+											Exec: &bootstrapv1.KubeConfigAuthExec{
+												APIVersion: "client.authentication.k8s.io/v1",
+												Command:    "/usr/bin/bootstrap",
+												Env: []bootstrapv1.KubeConfigAuthExecEnv{
+													{Name: "ENV_TEST", Value: "value"},
+												},
 											},
 										},
 									},

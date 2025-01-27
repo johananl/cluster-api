@@ -305,11 +305,6 @@ func RegisterConversions(s *runtime.Scheme) error {
 	}); err != nil {
 		return err
 	}
-	if err := s.AddGeneratedConversionFunc((*v1beta2.KubeadmConfigSpec)(nil), (*KubeadmConfigSpec)(nil), func(a, b interface{}, scope conversion.Scope) error {
-		return Convert_v1beta2_KubeadmConfigSpec_To_v1beta1_KubeadmConfigSpec(a.(*v1beta2.KubeadmConfigSpec), b.(*KubeadmConfigSpec), scope)
-	}); err != nil {
-		return err
-	}
 	if err := s.AddGeneratedConversionFunc((*KubeadmConfigTemplate)(nil), (*v1beta2.KubeadmConfigTemplate)(nil), func(a, b interface{}, scope conversion.Scope) error {
 		return Convert_v1beta1_KubeadmConfigTemplate_To_v1beta2_KubeadmConfigTemplate(a.(*KubeadmConfigTemplate), b.(*v1beta2.KubeadmConfigTemplate), scope)
 	}); err != nil {
@@ -507,6 +502,11 @@ func RegisterConversions(s *runtime.Scheme) error {
 	}
 	if err := s.AddConversionFunc((*v1beta2.JoinConfiguration)(nil), (*JoinConfiguration)(nil), func(a, b interface{}, scope conversion.Scope) error {
 		return Convert_v1beta2_JoinConfiguration_To_v1beta1_JoinConfiguration(a.(*v1beta2.JoinConfiguration), b.(*JoinConfiguration), scope)
+	}); err != nil {
+		return err
+	}
+	if err := s.AddConversionFunc((*v1beta2.KubeadmConfigSpec)(nil), (*KubeadmConfigSpec)(nil), func(a, b interface{}, scope conversion.Scope) error {
+		return Convert_v1beta2_KubeadmConfigSpec_To_v1beta1_KubeadmConfigSpec(a.(*v1beta2.KubeadmConfigSpec), b.(*KubeadmConfigSpec), scope)
 	}); err != nil {
 		return err
 	}
@@ -1390,93 +1390,34 @@ func Convert_v1beta2_KubeadmConfigList_To_v1beta1_KubeadmConfigList(in *v1beta2.
 }
 
 func autoConvert_v1beta1_KubeadmConfigSpec_To_v1beta2_KubeadmConfigSpec(in *KubeadmConfigSpec, out *v1beta2.KubeadmConfigSpec, s conversion.Scope) error {
-	if in.ClusterConfiguration != nil {
-		in, out := &in.ClusterConfiguration, &out.ClusterConfiguration
-		*out = new(v1beta2.ClusterConfiguration)
-		if err := Convert_v1beta1_ClusterConfiguration_To_v1beta2_ClusterConfiguration(*in, *out, s); err != nil {
-			return err
-		}
-	} else {
-		out.ClusterConfiguration = nil
-	}
-	if in.InitConfiguration != nil {
-		in, out := &in.InitConfiguration, &out.InitConfiguration
-		*out = new(v1beta2.InitConfiguration)
-		if err := Convert_v1beta1_InitConfiguration_To_v1beta2_InitConfiguration(*in, *out, s); err != nil {
-			return err
-		}
-	} else {
-		out.InitConfiguration = nil
-	}
-	if in.JoinConfiguration != nil {
-		in, out := &in.JoinConfiguration, &out.JoinConfiguration
-		*out = new(v1beta2.JoinConfiguration)
-		if err := Convert_v1beta1_JoinConfiguration_To_v1beta2_JoinConfiguration(*in, *out, s); err != nil {
-			return err
-		}
-	} else {
-		out.JoinConfiguration = nil
-	}
+	// WARNING: in.ClusterConfiguration requires manual conversion: does not exist in peer-type
+	// WARNING: in.InitConfiguration requires manual conversion: does not exist in peer-type
+	// WARNING: in.JoinConfiguration requires manual conversion: does not exist in peer-type
 	out.Files = *(*[]v1beta2.File)(unsafe.Pointer(&in.Files))
 	out.DiskSetup = (*v1beta2.DiskSetup)(unsafe.Pointer(in.DiskSetup))
 	out.Mounts = *(*[]v1beta2.MountPoints)(unsafe.Pointer(&in.Mounts))
 	out.BootCommands = *(*[]string)(unsafe.Pointer(&in.BootCommands))
-	out.PreKubeadmCommands = *(*[]string)(unsafe.Pointer(&in.PreKubeadmCommands))
-	out.PostKubeadmCommands = *(*[]string)(unsafe.Pointer(&in.PostKubeadmCommands))
+	// WARNING: in.PreKubeadmCommands requires manual conversion: does not exist in peer-type
+	// WARNING: in.PostKubeadmCommands requires manual conversion: does not exist in peer-type
 	out.Users = *(*[]v1beta2.User)(unsafe.Pointer(&in.Users))
 	out.NTP = (*v1beta2.NTP)(unsafe.Pointer(in.NTP))
-	out.Format = v1beta2.Format(in.Format)
-	out.Verbosity = (*int32)(unsafe.Pointer(in.Verbosity))
+	// WARNING: in.Format requires manual conversion: does not exist in peer-type
+	// WARNING: in.Verbosity requires manual conversion: does not exist in peer-type
 	// WARNING: in.UseExperimentalRetryJoin requires manual conversion: does not exist in peer-type
 	out.Ignition = (*v1beta2.IgnitionSpec)(unsafe.Pointer(in.Ignition))
 	return nil
 }
 
 func autoConvert_v1beta2_KubeadmConfigSpec_To_v1beta1_KubeadmConfigSpec(in *v1beta2.KubeadmConfigSpec, out *KubeadmConfigSpec, s conversion.Scope) error {
-	if in.ClusterConfiguration != nil {
-		in, out := &in.ClusterConfiguration, &out.ClusterConfiguration
-		*out = new(ClusterConfiguration)
-		if err := Convert_v1beta2_ClusterConfiguration_To_v1beta1_ClusterConfiguration(*in, *out, s); err != nil {
-			return err
-		}
-	} else {
-		out.ClusterConfiguration = nil
-	}
-	if in.InitConfiguration != nil {
-		in, out := &in.InitConfiguration, &out.InitConfiguration
-		*out = new(InitConfiguration)
-		if err := Convert_v1beta2_InitConfiguration_To_v1beta1_InitConfiguration(*in, *out, s); err != nil {
-			return err
-		}
-	} else {
-		out.InitConfiguration = nil
-	}
-	if in.JoinConfiguration != nil {
-		in, out := &in.JoinConfiguration, &out.JoinConfiguration
-		*out = new(JoinConfiguration)
-		if err := Convert_v1beta2_JoinConfiguration_To_v1beta1_JoinConfiguration(*in, *out, s); err != nil {
-			return err
-		}
-	} else {
-		out.JoinConfiguration = nil
-	}
+	// WARNING: in.KubeadmBaseConfig requires manual conversion: does not exist in peer-type
 	out.Files = *(*[]File)(unsafe.Pointer(&in.Files))
 	out.DiskSetup = (*DiskSetup)(unsafe.Pointer(in.DiskSetup))
 	out.Mounts = *(*[]MountPoints)(unsafe.Pointer(&in.Mounts))
 	out.BootCommands = *(*[]string)(unsafe.Pointer(&in.BootCommands))
-	out.PreKubeadmCommands = *(*[]string)(unsafe.Pointer(&in.PreKubeadmCommands))
-	out.PostKubeadmCommands = *(*[]string)(unsafe.Pointer(&in.PostKubeadmCommands))
 	out.Users = *(*[]User)(unsafe.Pointer(&in.Users))
 	out.NTP = (*NTP)(unsafe.Pointer(in.NTP))
-	out.Format = Format(in.Format)
-	out.Verbosity = (*int32)(unsafe.Pointer(in.Verbosity))
 	out.Ignition = (*IgnitionSpec)(unsafe.Pointer(in.Ignition))
 	return nil
-}
-
-// Convert_v1beta2_KubeadmConfigSpec_To_v1beta1_KubeadmConfigSpec is an autogenerated conversion function.
-func Convert_v1beta2_KubeadmConfigSpec_To_v1beta1_KubeadmConfigSpec(in *v1beta2.KubeadmConfigSpec, out *KubeadmConfigSpec, s conversion.Scope) error {
-	return autoConvert_v1beta2_KubeadmConfigSpec_To_v1beta1_KubeadmConfigSpec(in, out, s)
 }
 
 func autoConvert_v1beta1_KubeadmConfigStatus_To_v1beta2_KubeadmConfigStatus(in *KubeadmConfigStatus, out *v1beta2.KubeadmConfigStatus, s conversion.Scope) error {

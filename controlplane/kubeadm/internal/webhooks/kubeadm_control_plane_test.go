@@ -94,7 +94,9 @@ func TestKubeadmControlPlaneValidateCreate(t *testing.T) {
 				},
 			},
 			KubeadmConfigSpec: bootstrapv1.KubeadmConfigSpec{
-				ClusterConfiguration: &bootstrapv1.ClusterConfiguration{},
+				KubeadmBaseConfig: bootstrapv1.KubeadmBaseConfig{
+					ClusterConfiguration: &bootstrapv1.ClusterConfiguration{},
+				},
 			},
 			Replicas: ptr.To[int32](1),
 			Version:  "v1.19.0",
@@ -130,9 +132,11 @@ func TestKubeadmControlPlaneValidateCreate(t *testing.T) {
 
 	evenReplicasExternalEtcd := evenReplicas.DeepCopy()
 	evenReplicasExternalEtcd.Spec.KubeadmConfigSpec = bootstrapv1.KubeadmConfigSpec{
-		ClusterConfiguration: &bootstrapv1.ClusterConfiguration{
-			Etcd: bootstrapv1.Etcd{
-				External: &bootstrapv1.ExternalEtcd{},
+		KubeadmBaseConfig: bootstrapv1.KubeadmBaseConfig{
+			ClusterConfiguration: &bootstrapv1.ClusterConfiguration{
+				Etcd: bootstrapv1.Etcd{
+					External: &bootstrapv1.ExternalEtcd{},
+				},
 			},
 		},
 	}
@@ -330,41 +334,43 @@ func TestKubeadmControlPlaneValidateUpdate(t *testing.T) {
 				},
 			},
 			KubeadmConfigSpec: bootstrapv1.KubeadmConfigSpec{
-				InitConfiguration: &bootstrapv1.InitConfiguration{
-					LocalAPIEndpoint: bootstrapv1.APIEndpoint{
-						AdvertiseAddress: "127.0.0.1",
-						BindPort:         int32(443),
-					},
-					NodeRegistration: bootstrapv1.NodeRegistrationOptions{
-						Name: "test",
-					},
-					Timeouts: &bootstrapv1.Timeouts{
-						ControlPlaneComponentHealthCheckSeconds: ptr.To[int32](10),
-						KubeletHealthCheckSeconds:               ptr.To[int32](40),
-					},
-				},
-				ClusterConfiguration: &bootstrapv1.ClusterConfiguration{
-					DNS: bootstrapv1.DNS{
-						ImageMeta: bootstrapv1.ImageMeta{
-							ImageRepository: "registry.k8s.io/coredns",
-							ImageTag:        "1.6.5",
+				KubeadmBaseConfig: bootstrapv1.KubeadmBaseConfig{
+					InitConfiguration: &bootstrapv1.InitConfiguration{
+						LocalAPIEndpoint: bootstrapv1.APIEndpoint{
+							AdvertiseAddress: "127.0.0.1",
+							BindPort:         int32(443),
+						},
+						NodeRegistration: bootstrapv1.NodeRegistrationOptions{
+							Name: "test",
+						},
+						Timeouts: &bootstrapv1.Timeouts{
+							ControlPlaneComponentHealthCheckSeconds: ptr.To[int32](10),
+							KubeletHealthCheckSeconds:               ptr.To[int32](40),
 						},
 					},
-				},
-				JoinConfiguration: &bootstrapv1.JoinConfiguration{
-					NodeRegistration: bootstrapv1.NodeRegistrationOptions{
-						Name: "test",
+					ClusterConfiguration: &bootstrapv1.ClusterConfiguration{
+						DNS: bootstrapv1.DNS{
+							ImageMeta: bootstrapv1.ImageMeta{
+								ImageRepository: "registry.k8s.io/coredns",
+								ImageTag:        "1.6.5",
+							},
+						},
 					},
-					Timeouts: &bootstrapv1.Timeouts{
-						ControlPlaneComponentHealthCheckSeconds: ptr.To[int32](10),
-						KubeletHealthCheckSeconds:               ptr.To[int32](40),
+					JoinConfiguration: &bootstrapv1.JoinConfiguration{
+						NodeRegistration: bootstrapv1.NodeRegistrationOptions{
+							Name: "test",
+						},
+						Timeouts: &bootstrapv1.Timeouts{
+							ControlPlaneComponentHealthCheckSeconds: ptr.To[int32](10),
+							KubeletHealthCheckSeconds:               ptr.To[int32](40),
+						},
 					},
-				},
-				PreKubeadmCommands: []string{
-					"test", "foo",
-				},
-				PostKubeadmCommands: []string{
-					"test", "foo",
+					PreKubeadmCommands: []string{
+						"test", "foo",
+					},
+					PostKubeadmCommands: []string{
+						"test", "foo",
+					},
 				},
 				Files: []bootstrapv1.File{
 					{
@@ -1198,7 +1204,9 @@ func TestValidateVersion(t *testing.T) {
 			kcpNew := controlplanev1.KubeadmControlPlane{
 				Spec: controlplanev1.KubeadmControlPlaneSpec{
 					KubeadmConfigSpec: bootstrapv1.KubeadmConfigSpec{
-						ClusterConfiguration: tt.clusterConfiguration,
+						KubeadmBaseConfig: bootstrapv1.KubeadmBaseConfig{
+							ClusterConfiguration: tt.clusterConfiguration,
+						},
 					},
 					Version: tt.newVersion,
 				},
@@ -1207,7 +1215,9 @@ func TestValidateVersion(t *testing.T) {
 			kcpOld := controlplanev1.KubeadmControlPlane{
 				Spec: controlplanev1.KubeadmControlPlaneSpec{
 					KubeadmConfigSpec: bootstrapv1.KubeadmConfigSpec{
-						ClusterConfiguration: tt.clusterConfiguration,
+						KubeadmBaseConfig: bootstrapv1.KubeadmBaseConfig{
+							ClusterConfiguration: tt.clusterConfiguration,
+						},
 					},
 					Version: tt.oldVersion,
 				},

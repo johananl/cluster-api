@@ -38,18 +38,20 @@ func TestClusterConfigurationAnnotation(t *testing.T) {
 		kcp := &controlplanev1.KubeadmControlPlane{
 			Spec: controlplanev1.KubeadmControlPlaneSpec{
 				KubeadmConfigSpec: bootstrapv1.KubeadmConfigSpec{
-					ClusterConfiguration: &bootstrapv1.ClusterConfiguration{
-						APIServer: bootstrapv1.APIServer{
-							ControlPlaneComponent: bootstrapv1.ControlPlaneComponent{
-								ExtraArgs: []bootstrapv1.Arg{
-									{
-										Name:  "foo",
-										Value: "bar",
+					KubeadmBaseConfig: bootstrapv1.KubeadmBaseConfig{
+						ClusterConfiguration: &bootstrapv1.ClusterConfiguration{
+							APIServer: bootstrapv1.APIServer{
+								ControlPlaneComponent: bootstrapv1.ControlPlaneComponent{
+									ExtraArgs: []bootstrapv1.Arg{
+										{
+											Name:  "foo",
+											Value: "bar",
+										},
 									},
 								},
 							},
+							CertificatesDir: "foo",
 						},
-						CertificatesDir: "foo",
 					},
 				},
 			},
@@ -155,8 +157,10 @@ func TestMatchClusterConfiguration(t *testing.T) {
 		kcp := &controlplanev1.KubeadmControlPlane{
 			Spec: controlplanev1.KubeadmControlPlaneSpec{
 				KubeadmConfigSpec: bootstrapv1.KubeadmConfigSpec{
-					ClusterConfiguration: &bootstrapv1.ClusterConfiguration{
-						CertificatesDir: "foo",
+					KubeadmBaseConfig: bootstrapv1.KubeadmBaseConfig{
+						ClusterConfiguration: &bootstrapv1.ClusterConfiguration{
+							CertificatesDir: "foo",
+						},
 					},
 				},
 			},
@@ -178,8 +182,10 @@ func TestMatchClusterConfiguration(t *testing.T) {
 		kcp := &controlplanev1.KubeadmControlPlane{
 			Spec: controlplanev1.KubeadmControlPlaneSpec{
 				KubeadmConfigSpec: bootstrapv1.KubeadmConfigSpec{
-					ClusterConfiguration: &bootstrapv1.ClusterConfiguration{
-						CertificatesDir: "foo",
+					KubeadmBaseConfig: bootstrapv1.KubeadmBaseConfig{
+						ClusterConfiguration: &bootstrapv1.ClusterConfiguration{
+							CertificatesDir: "foo",
+						},
 					},
 				},
 			},
@@ -228,11 +234,13 @@ func TestMatchClusterConfiguration(t *testing.T) {
 		kcp := &controlplanev1.KubeadmControlPlane{
 			Spec: controlplanev1.KubeadmControlPlaneSpec{
 				KubeadmConfigSpec: bootstrapv1.KubeadmConfigSpec{
-					ClusterConfiguration: &bootstrapv1.ClusterConfiguration{
-						DNS: bootstrapv1.DNS{
-							ImageMeta: bootstrapv1.ImageMeta{
-								ImageTag:        "v1.10.1",
-								ImageRepository: "gcr.io/capi-test",
+					KubeadmBaseConfig: bootstrapv1.KubeadmBaseConfig{
+						ClusterConfiguration: &bootstrapv1.ClusterConfiguration{
+							DNS: bootstrapv1.DNS{
+								ImageMeta: bootstrapv1.ImageMeta{
+									ImageTag:        "v1.10.1",
+									ImageRepository: "gcr.io/capi-test",
+								},
 							},
 						},
 					},
@@ -256,9 +264,19 @@ func TestMatchClusterConfiguration(t *testing.T) {
 		kcp := &controlplanev1.KubeadmControlPlane{
 			Spec: controlplanev1.KubeadmControlPlaneSpec{
 				KubeadmConfigSpec: bootstrapv1.KubeadmConfigSpec{
-					ClusterConfiguration: &bootstrapv1.ClusterConfiguration{
-						APIServer: bootstrapv1.APIServer{
-							ControlPlaneComponent: bootstrapv1.ControlPlaneComponent{
+					KubeadmBaseConfig: bootstrapv1.KubeadmBaseConfig{
+						ClusterConfiguration: &bootstrapv1.ClusterConfiguration{
+							APIServer: bootstrapv1.APIServer{
+								ControlPlaneComponent: bootstrapv1.ControlPlaneComponent{
+									ExtraArgs: []bootstrapv1.Arg{
+										{
+											Name:  "foo",
+											Value: "bar",
+										},
+									},
+								},
+							},
+							ControllerManager: bootstrapv1.ControlPlaneComponent{
 								ExtraArgs: []bootstrapv1.Arg{
 									{
 										Name:  "foo",
@@ -266,27 +284,19 @@ func TestMatchClusterConfiguration(t *testing.T) {
 									},
 								},
 							},
-						},
-						ControllerManager: bootstrapv1.ControlPlaneComponent{
-							ExtraArgs: []bootstrapv1.Arg{
-								{
-									Name:  "foo",
-									Value: "bar",
+							Scheduler: bootstrapv1.ControlPlaneComponent{
+								ExtraArgs: []bootstrapv1.Arg{
+									{
+										Name:  "foo",
+										Value: "bar",
+									},
 								},
 							},
-						},
-						Scheduler: bootstrapv1.ControlPlaneComponent{
-							ExtraArgs: []bootstrapv1.Arg{
-								{
-									Name:  "foo",
-									Value: "bar",
+							DNS: bootstrapv1.DNS{
+								ImageMeta: bootstrapv1.ImageMeta{
+									ImageTag:        "v1.10.1",
+									ImageRepository: "gcr.io/capi-test",
 								},
-							},
-						},
-						DNS: bootstrapv1.DNS{
-							ImageMeta: bootstrapv1.ImageMeta{
-								ImageTag:        "v1.10.1",
-								ImageRepository: "gcr.io/capi-test",
 							},
 						},
 					},
@@ -322,14 +332,18 @@ func TestGetAdjustedKcpConfig(t *testing.T) {
 		kcp := &controlplanev1.KubeadmControlPlane{
 			Spec: controlplanev1.KubeadmControlPlaneSpec{
 				KubeadmConfigSpec: bootstrapv1.KubeadmConfigSpec{
-					InitConfiguration: &bootstrapv1.InitConfiguration{},
-					JoinConfiguration: &bootstrapv1.JoinConfiguration{},
+					KubeadmBaseConfig: bootstrapv1.KubeadmBaseConfig{
+						InitConfiguration: &bootstrapv1.InitConfiguration{},
+						JoinConfiguration: &bootstrapv1.JoinConfiguration{},
+					},
 				},
 			},
 		}
 		machineConfig := &bootstrapv1.KubeadmConfig{
 			Spec: bootstrapv1.KubeadmConfigSpec{
-				InitConfiguration: &bootstrapv1.InitConfiguration{}, // first control-plane
+				KubeadmBaseConfig: bootstrapv1.KubeadmBaseConfig{
+					InitConfiguration: &bootstrapv1.InitConfiguration{}, // first control-plane
+				},
 			},
 		}
 		kcpConfig := getAdjustedKcpConfig(kcp, machineConfig)
@@ -341,14 +355,18 @@ func TestGetAdjustedKcpConfig(t *testing.T) {
 		kcp := &controlplanev1.KubeadmControlPlane{
 			Spec: controlplanev1.KubeadmControlPlaneSpec{
 				KubeadmConfigSpec: bootstrapv1.KubeadmConfigSpec{
-					InitConfiguration: &bootstrapv1.InitConfiguration{},
-					JoinConfiguration: &bootstrapv1.JoinConfiguration{},
+					KubeadmBaseConfig: bootstrapv1.KubeadmBaseConfig{
+						InitConfiguration: &bootstrapv1.InitConfiguration{},
+						JoinConfiguration: &bootstrapv1.JoinConfiguration{},
+					},
 				},
 			},
 		}
 		machineConfig := &bootstrapv1.KubeadmConfig{
 			Spec: bootstrapv1.KubeadmConfigSpec{
-				JoinConfiguration: &bootstrapv1.JoinConfiguration{}, // joining control-plane
+				KubeadmBaseConfig: bootstrapv1.KubeadmBaseConfig{
+					JoinConfiguration: &bootstrapv1.JoinConfiguration{}, // joining control-plane
+				},
 			},
 		}
 		kcpConfig := getAdjustedKcpConfig(kcp, machineConfig)
@@ -361,11 +379,15 @@ func TestCleanupConfigFields(t *testing.T) {
 	t.Run("ClusterConfiguration gets removed from KcpConfig and MachineConfig", func(t *testing.T) {
 		g := NewWithT(t)
 		kcpConfig := &bootstrapv1.KubeadmConfigSpec{
-			ClusterConfiguration: &bootstrapv1.ClusterConfiguration{},
+			KubeadmBaseConfig: bootstrapv1.KubeadmBaseConfig{
+				ClusterConfiguration: &bootstrapv1.ClusterConfiguration{},
+			},
 		}
 		machineConfig := &bootstrapv1.KubeadmConfig{
 			Spec: bootstrapv1.KubeadmConfigSpec{
-				ClusterConfiguration: &bootstrapv1.ClusterConfiguration{},
+				KubeadmBaseConfig: bootstrapv1.KubeadmBaseConfig{
+					ClusterConfiguration: &bootstrapv1.ClusterConfiguration{},
+				},
 			},
 		}
 		cleanupConfigFields(kcpConfig, machineConfig)
@@ -375,11 +397,15 @@ func TestCleanupConfigFields(t *testing.T) {
 	t.Run("JoinConfiguration gets removed from MachineConfig if it was not derived by KCPConfig", func(t *testing.T) {
 		g := NewWithT(t)
 		kcpConfig := &bootstrapv1.KubeadmConfigSpec{
-			JoinConfiguration: nil, // KCP not providing a JoinConfiguration
+			KubeadmBaseConfig: bootstrapv1.KubeadmBaseConfig{
+				JoinConfiguration: nil, // KCP not providing a JoinConfiguration
+			},
 		}
 		machineConfig := &bootstrapv1.KubeadmConfig{
 			Spec: bootstrapv1.KubeadmConfigSpec{
-				JoinConfiguration: &bootstrapv1.JoinConfiguration{}, // Machine gets a default JoinConfiguration from CABPK
+				KubeadmBaseConfig: bootstrapv1.KubeadmBaseConfig{
+					JoinConfiguration: &bootstrapv1.JoinConfiguration{}, // Machine gets a default JoinConfiguration from CABPK
+				},
 			},
 		}
 		cleanupConfigFields(kcpConfig, machineConfig)
@@ -389,14 +415,18 @@ func TestCleanupConfigFields(t *testing.T) {
 	t.Run("JoinConfiguration.Discovery gets removed because it is not relevant for compare", func(t *testing.T) {
 		g := NewWithT(t)
 		kcpConfig := &bootstrapv1.KubeadmConfigSpec{
-			JoinConfiguration: &bootstrapv1.JoinConfiguration{
-				Discovery: bootstrapv1.Discovery{TLSBootstrapToken: "aaa"},
+			KubeadmBaseConfig: bootstrapv1.KubeadmBaseConfig{
+				JoinConfiguration: &bootstrapv1.JoinConfiguration{
+					Discovery: bootstrapv1.Discovery{TLSBootstrapToken: "aaa"},
+				},
 			},
 		}
 		machineConfig := &bootstrapv1.KubeadmConfig{
 			Spec: bootstrapv1.KubeadmConfigSpec{
-				JoinConfiguration: &bootstrapv1.JoinConfiguration{
-					Discovery: bootstrapv1.Discovery{TLSBootstrapToken: "aaa"},
+				KubeadmBaseConfig: bootstrapv1.KubeadmBaseConfig{
+					JoinConfiguration: &bootstrapv1.JoinConfiguration{
+						Discovery: bootstrapv1.Discovery{TLSBootstrapToken: "aaa"},
+					},
 				},
 			},
 		}
@@ -407,14 +437,18 @@ func TestCleanupConfigFields(t *testing.T) {
 	t.Run("JoinConfiguration.ControlPlane gets removed from MachineConfig if it was not derived by KCPConfig", func(t *testing.T) {
 		g := NewWithT(t)
 		kcpConfig := &bootstrapv1.KubeadmConfigSpec{
-			JoinConfiguration: &bootstrapv1.JoinConfiguration{
-				ControlPlane: nil, // Control plane configuration missing in KCP
+			KubeadmBaseConfig: bootstrapv1.KubeadmBaseConfig{
+				JoinConfiguration: &bootstrapv1.JoinConfiguration{
+					ControlPlane: nil, // Control plane configuration missing in KCP
+				},
 			},
 		}
 		machineConfig := &bootstrapv1.KubeadmConfig{
 			Spec: bootstrapv1.KubeadmConfigSpec{
-				JoinConfiguration: &bootstrapv1.JoinConfiguration{
-					ControlPlane: &bootstrapv1.JoinControlPlane{}, // Machine gets a default JoinConfiguration.ControlPlane from CABPK
+				KubeadmBaseConfig: bootstrapv1.KubeadmBaseConfig{
+					JoinConfiguration: &bootstrapv1.JoinConfiguration{
+						ControlPlane: &bootstrapv1.JoinControlPlane{}, // Machine gets a default JoinConfiguration.ControlPlane from CABPK
+					},
 				},
 			},
 		}
@@ -425,14 +459,18 @@ func TestCleanupConfigFields(t *testing.T) {
 	t.Run("JoinConfiguration.NodeRegistrationOptions gets removed from MachineConfig if it was not derived by KCPConfig", func(t *testing.T) {
 		g := NewWithT(t)
 		kcpConfig := &bootstrapv1.KubeadmConfigSpec{
-			JoinConfiguration: &bootstrapv1.JoinConfiguration{
-				NodeRegistration: bootstrapv1.NodeRegistrationOptions{}, // NodeRegistrationOptions configuration missing in KCP
+			KubeadmBaseConfig: bootstrapv1.KubeadmBaseConfig{
+				JoinConfiguration: &bootstrapv1.JoinConfiguration{
+					NodeRegistration: bootstrapv1.NodeRegistrationOptions{}, // NodeRegistrationOptions configuration missing in KCP
+				},
 			},
 		}
 		machineConfig := &bootstrapv1.KubeadmConfig{
 			Spec: bootstrapv1.KubeadmConfigSpec{
-				JoinConfiguration: &bootstrapv1.JoinConfiguration{
-					NodeRegistration: bootstrapv1.NodeRegistrationOptions{Name: "test"}, // Machine gets a some JoinConfiguration.NodeRegistrationOptions
+				KubeadmBaseConfig: bootstrapv1.KubeadmBaseConfig{
+					JoinConfiguration: &bootstrapv1.JoinConfiguration{
+						NodeRegistration: bootstrapv1.NodeRegistrationOptions{Name: "test"}, // Machine gets a some JoinConfiguration.NodeRegistrationOptions
+					},
 				},
 			},
 		}
@@ -456,7 +494,9 @@ func TestMatchInitOrJoinConfiguration(t *testing.T) {
 		kcp := &controlplanev1.KubeadmControlPlane{
 			Spec: controlplanev1.KubeadmControlPlaneSpec{
 				KubeadmConfigSpec: bootstrapv1.KubeadmConfigSpec{
-					Format: bootstrapv1.CloudConfig,
+					KubeadmBaseConfig: bootstrapv1.KubeadmBaseConfig{
+						Format: bootstrapv1.CloudConfig,
+					},
 				},
 			},
 		}
@@ -491,7 +531,9 @@ func TestMatchInitOrJoinConfiguration(t *testing.T) {
 					Name:      "test",
 				},
 				Spec: bootstrapv1.KubeadmConfigSpec{
-					Format: "",
+					KubeadmBaseConfig: bootstrapv1.KubeadmBaseConfig{
+						Format: "",
+					},
 				},
 			},
 		}
@@ -505,9 +547,11 @@ func TestMatchInitOrJoinConfiguration(t *testing.T) {
 		kcp := &controlplanev1.KubeadmControlPlane{
 			Spec: controlplanev1.KubeadmControlPlaneSpec{
 				KubeadmConfigSpec: bootstrapv1.KubeadmConfigSpec{
-					ClusterConfiguration: &bootstrapv1.ClusterConfiguration{},
-					InitConfiguration:    nil,
-					JoinConfiguration:    &bootstrapv1.JoinConfiguration{},
+					KubeadmBaseConfig: bootstrapv1.KubeadmBaseConfig{
+						ClusterConfiguration: &bootstrapv1.ClusterConfiguration{},
+						InitConfiguration:    nil,
+						JoinConfiguration:    &bootstrapv1.JoinConfiguration{},
+					},
 				},
 			},
 		}
@@ -542,7 +586,9 @@ func TestMatchInitOrJoinConfiguration(t *testing.T) {
 					Name:      "test",
 				},
 				Spec: bootstrapv1.KubeadmConfigSpec{
-					InitConfiguration: &bootstrapv1.InitConfiguration{},
+					KubeadmBaseConfig: bootstrapv1.KubeadmBaseConfig{
+						InitConfiguration: &bootstrapv1.InitConfiguration{},
+					},
 				},
 			},
 		}
@@ -556,9 +602,11 @@ func TestMatchInitOrJoinConfiguration(t *testing.T) {
 		kcp := &controlplanev1.KubeadmControlPlane{
 			Spec: controlplanev1.KubeadmControlPlaneSpec{
 				KubeadmConfigSpec: bootstrapv1.KubeadmConfigSpec{
-					ClusterConfiguration: &bootstrapv1.ClusterConfiguration{},
-					InitConfiguration:    &bootstrapv1.InitConfiguration{},
-					JoinConfiguration:    &bootstrapv1.JoinConfiguration{},
+					KubeadmBaseConfig: bootstrapv1.KubeadmBaseConfig{
+						ClusterConfiguration: &bootstrapv1.ClusterConfiguration{},
+						InitConfiguration:    &bootstrapv1.InitConfiguration{},
+						JoinConfiguration:    &bootstrapv1.JoinConfiguration{},
+					},
 				},
 			},
 		}
@@ -593,7 +641,9 @@ func TestMatchInitOrJoinConfiguration(t *testing.T) {
 					Name:      "test",
 				},
 				Spec: bootstrapv1.KubeadmConfigSpec{
-					InitConfiguration: &bootstrapv1.InitConfiguration{},
+					KubeadmBaseConfig: bootstrapv1.KubeadmBaseConfig{
+						InitConfiguration: &bootstrapv1.InitConfiguration{},
+					},
 				},
 			},
 		}
@@ -607,13 +657,15 @@ func TestMatchInitOrJoinConfiguration(t *testing.T) {
 		kcp := &controlplanev1.KubeadmControlPlane{
 			Spec: controlplanev1.KubeadmControlPlaneSpec{
 				KubeadmConfigSpec: bootstrapv1.KubeadmConfigSpec{
-					ClusterConfiguration: &bootstrapv1.ClusterConfiguration{},
-					InitConfiguration: &bootstrapv1.InitConfiguration{
-						NodeRegistration: bootstrapv1.NodeRegistrationOptions{
-							Name: "A new name", // This is a change
+					KubeadmBaseConfig: bootstrapv1.KubeadmBaseConfig{
+						ClusterConfiguration: &bootstrapv1.ClusterConfiguration{},
+						InitConfiguration: &bootstrapv1.InitConfiguration{
+							NodeRegistration: bootstrapv1.NodeRegistrationOptions{
+								Name: "A new name", // This is a change
+							},
 						},
+						JoinConfiguration: &bootstrapv1.JoinConfiguration{},
 					},
-					JoinConfiguration: &bootstrapv1.JoinConfiguration{},
 				},
 			},
 		}
@@ -648,7 +700,9 @@ func TestMatchInitOrJoinConfiguration(t *testing.T) {
 					Name:      "test",
 				},
 				Spec: bootstrapv1.KubeadmConfigSpec{
-					InitConfiguration: &bootstrapv1.InitConfiguration{},
+					KubeadmBaseConfig: bootstrapv1.KubeadmBaseConfig{
+						InitConfiguration: &bootstrapv1.InitConfiguration{},
+					},
 				},
 			},
 		}
@@ -656,23 +710,28 @@ func TestMatchInitOrJoinConfiguration(t *testing.T) {
 		g.Expect(err).ToNot(HaveOccurred())
 		g.Expect(match).To(BeFalse())
 		g.Expect(diff).To(BeComparableTo(`&v1beta2.KubeadmConfigSpec{
-    ClusterConfiguration: nil,
-    InitConfiguration: &v1beta2.InitConfiguration{
-      BootstrapTokens: nil,
-      NodeRegistration: v1beta2.NodeRegistrationOptions{
--       Name:      "",
-+       Name:      "A new name",
-        CRISocket: "",
-        Taints:    nil,
-        ... // 4 identical fields
+    KubeadmBaseConfig: v1beta2.KubeadmBaseConfig{
+      ClusterConfiguration: nil,
+      InitConfiguration: &v1beta2.InitConfiguration{
+        BootstrapTokens: nil,
+        NodeRegistration: v1beta2.NodeRegistrationOptions{
+-         Name:      "",
++         Name:      "A new name",
+          CRISocket: "",
+          Taints:    nil,
+          ... // 4 identical fields
+        },
+        LocalAPIEndpoint: {},
+        SkipPhases:       nil,
+        ... // 2 identical fields
       },
-      LocalAPIEndpoint: {},
-      SkipPhases:       nil,
-      ... // 2 identical fields
+      JoinConfiguration:  nil,
+      PreKubeadmCommands: nil,
+      ... // 3 identical fields
     },
-    JoinConfiguration: nil,
-    Files:             nil,
-    ... // 10 identical fields
+    Files:     nil,
+    DiskSetup: nil,
+    ... // 5 identical fields
   }`))
 	})
 	t.Run("returns true if JoinConfiguration is equal", func(t *testing.T) {
@@ -680,9 +739,11 @@ func TestMatchInitOrJoinConfiguration(t *testing.T) {
 		kcp := &controlplanev1.KubeadmControlPlane{
 			Spec: controlplanev1.KubeadmControlPlaneSpec{
 				KubeadmConfigSpec: bootstrapv1.KubeadmConfigSpec{
-					ClusterConfiguration: &bootstrapv1.ClusterConfiguration{},
-					InitConfiguration:    &bootstrapv1.InitConfiguration{},
-					JoinConfiguration:    &bootstrapv1.JoinConfiguration{},
+					KubeadmBaseConfig: bootstrapv1.KubeadmBaseConfig{
+						ClusterConfiguration: &bootstrapv1.ClusterConfiguration{},
+						InitConfiguration:    &bootstrapv1.InitConfiguration{},
+						JoinConfiguration:    &bootstrapv1.JoinConfiguration{},
+					},
 				},
 			},
 		}
@@ -717,7 +778,9 @@ func TestMatchInitOrJoinConfiguration(t *testing.T) {
 					Name:      "test",
 				},
 				Spec: bootstrapv1.KubeadmConfigSpec{
-					JoinConfiguration: &bootstrapv1.JoinConfiguration{},
+					KubeadmBaseConfig: bootstrapv1.KubeadmBaseConfig{
+						JoinConfiguration: &bootstrapv1.JoinConfiguration{},
+					},
 				},
 			},
 		}
@@ -731,11 +794,13 @@ func TestMatchInitOrJoinConfiguration(t *testing.T) {
 		kcp := &controlplanev1.KubeadmControlPlane{
 			Spec: controlplanev1.KubeadmControlPlaneSpec{
 				KubeadmConfigSpec: bootstrapv1.KubeadmConfigSpec{
-					ClusterConfiguration: &bootstrapv1.ClusterConfiguration{},
-					InitConfiguration:    &bootstrapv1.InitConfiguration{},
-					JoinConfiguration: &bootstrapv1.JoinConfiguration{
-						NodeRegistration: bootstrapv1.NodeRegistrationOptions{
-							Name: "A new name", // This is a change
+					KubeadmBaseConfig: bootstrapv1.KubeadmBaseConfig{
+						ClusterConfiguration: &bootstrapv1.ClusterConfiguration{},
+						InitConfiguration:    &bootstrapv1.InitConfiguration{},
+						JoinConfiguration: &bootstrapv1.JoinConfiguration{
+							NodeRegistration: bootstrapv1.NodeRegistrationOptions{
+								Name: "A new name", // This is a change
+							},
 						},
 					},
 				},
@@ -772,7 +837,9 @@ func TestMatchInitOrJoinConfiguration(t *testing.T) {
 					Name:      "test",
 				},
 				Spec: bootstrapv1.KubeadmConfigSpec{
-					JoinConfiguration: &bootstrapv1.JoinConfiguration{},
+					KubeadmBaseConfig: bootstrapv1.KubeadmBaseConfig{
+						JoinConfiguration: &bootstrapv1.JoinConfiguration{},
+					},
 				},
 			},
 		}
@@ -780,23 +847,28 @@ func TestMatchInitOrJoinConfiguration(t *testing.T) {
 		g.Expect(err).ToNot(HaveOccurred())
 		g.Expect(match).To(BeFalse())
 		g.Expect(diff).To(BeComparableTo(`&v1beta2.KubeadmConfigSpec{
-    ClusterConfiguration: nil,
-    InitConfiguration:    nil,
-    JoinConfiguration: &v1beta2.JoinConfiguration{
-      NodeRegistration: v1beta2.NodeRegistrationOptions{
--       Name:      "",
-+       Name:      "A new name",
-        CRISocket: "",
-        Taints:    nil,
+    KubeadmBaseConfig: v1beta2.KubeadmBaseConfig{
+      ClusterConfiguration: nil,
+      InitConfiguration:    nil,
+      JoinConfiguration: &v1beta2.JoinConfiguration{
+        NodeRegistration: v1beta2.NodeRegistrationOptions{
+-         Name:      "",
++         Name:      "A new name",
+          CRISocket: "",
+          Taints:    nil,
+          ... // 4 identical fields
+        },
+        CACertPath: "",
+        Discovery:  {},
         ... // 4 identical fields
       },
-      CACertPath: "",
-      Discovery:  {},
-      ... // 4 identical fields
+      PreKubeadmCommands:  nil,
+      PostKubeadmCommands: nil,
+      ... // 2 identical fields
     },
     Files:     nil,
     DiskSetup: nil,
-    ... // 9 identical fields
+    ... // 5 identical fields
   }`))
 	})
 	t.Run("returns false if some other configurations are not equal", func(t *testing.T) {
@@ -804,10 +876,12 @@ func TestMatchInitOrJoinConfiguration(t *testing.T) {
 		kcp := &controlplanev1.KubeadmControlPlane{
 			Spec: controlplanev1.KubeadmControlPlaneSpec{
 				KubeadmConfigSpec: bootstrapv1.KubeadmConfigSpec{
-					ClusterConfiguration: &bootstrapv1.ClusterConfiguration{},
-					InitConfiguration:    &bootstrapv1.InitConfiguration{},
-					JoinConfiguration:    &bootstrapv1.JoinConfiguration{},
-					Files:                []bootstrapv1.File{}, // This is a change
+					KubeadmBaseConfig: bootstrapv1.KubeadmBaseConfig{
+						ClusterConfiguration: &bootstrapv1.ClusterConfiguration{},
+						InitConfiguration:    &bootstrapv1.InitConfiguration{},
+						JoinConfiguration:    &bootstrapv1.JoinConfiguration{},
+					},
+					Files: []bootstrapv1.File{}, // This is a change
 				},
 			},
 		}
@@ -842,7 +916,9 @@ func TestMatchInitOrJoinConfiguration(t *testing.T) {
 					Name:      "test",
 				},
 				Spec: bootstrapv1.KubeadmConfigSpec{
-					InitConfiguration: &bootstrapv1.InitConfiguration{},
+					KubeadmBaseConfig: bootstrapv1.KubeadmBaseConfig{
+						InitConfiguration: &bootstrapv1.InitConfiguration{},
+					},
 				},
 			},
 		}
@@ -850,14 +926,12 @@ func TestMatchInitOrJoinConfiguration(t *testing.T) {
 		g.Expect(err).ToNot(HaveOccurred())
 		g.Expect(match).To(BeFalse())
 		g.Expect(diff).To(BeComparableTo(`&v1beta2.KubeadmConfigSpec{
-    ClusterConfiguration: nil,
-    InitConfiguration:    &{NodeRegistration: {ImagePullPolicy: "IfNotPresent"}},
-    JoinConfiguration:    nil,
--   Files:                nil,
-+   Files:                []v1beta2.File{},
-    DiskSetup:            nil,
-    Mounts:               nil,
-    ... // 8 identical fields
+    KubeadmBaseConfig: {InitConfiguration: &{NodeRegistration: {ImagePullPolicy: "IfNotPresent"}}, Format: "cloud-config"},
+-   Files:             nil,
++   Files:             []v1beta2.File{},
+    DiskSetup:         nil,
+    Mounts:            nil,
+    ... // 4 identical fields
   }`))
 	})
 }
@@ -868,8 +942,10 @@ func TestMatchesKubeadmBootstrapConfig(t *testing.T) {
 		kcp := &controlplanev1.KubeadmControlPlane{
 			Spec: controlplanev1.KubeadmControlPlaneSpec{
 				KubeadmConfigSpec: bootstrapv1.KubeadmConfigSpec{
-					ClusterConfiguration: &bootstrapv1.ClusterConfiguration{
-						CertificatesDir: "foo",
+					KubeadmBaseConfig: bootstrapv1.KubeadmBaseConfig{
+						ClusterConfiguration: &bootstrapv1.ClusterConfiguration{
+							CertificatesDir: "foo",
+						},
 					},
 				},
 			},
@@ -894,8 +970,10 @@ func TestMatchesKubeadmBootstrapConfig(t *testing.T) {
 		kcp := &controlplanev1.KubeadmControlPlane{
 			Spec: controlplanev1.KubeadmControlPlaneSpec{
 				KubeadmConfigSpec: bootstrapv1.KubeadmConfigSpec{
-					ClusterConfiguration: &bootstrapv1.ClusterConfiguration{
-						CertificatesDir: "foo",
+					KubeadmBaseConfig: bootstrapv1.KubeadmBaseConfig{
+						ClusterConfiguration: &bootstrapv1.ClusterConfiguration{
+							CertificatesDir: "foo",
+						},
 					},
 				},
 			},
@@ -928,9 +1006,11 @@ func TestMatchesKubeadmBootstrapConfig(t *testing.T) {
 		kcp := &controlplanev1.KubeadmControlPlane{
 			Spec: controlplanev1.KubeadmControlPlaneSpec{
 				KubeadmConfigSpec: bootstrapv1.KubeadmConfigSpec{
-					ClusterConfiguration: &bootstrapv1.ClusterConfiguration{},
-					InitConfiguration:    &bootstrapv1.InitConfiguration{},
-					JoinConfiguration:    &bootstrapv1.JoinConfiguration{},
+					KubeadmBaseConfig: bootstrapv1.KubeadmBaseConfig{
+						ClusterConfiguration: &bootstrapv1.ClusterConfiguration{},
+						InitConfiguration:    &bootstrapv1.InitConfiguration{},
+						JoinConfiguration:    &bootstrapv1.JoinConfiguration{},
+					},
 				},
 			},
 		}
@@ -965,7 +1045,9 @@ func TestMatchesKubeadmBootstrapConfig(t *testing.T) {
 					Name:      "test",
 				},
 				Spec: bootstrapv1.KubeadmConfigSpec{
-					InitConfiguration: &bootstrapv1.InitConfiguration{},
+					KubeadmBaseConfig: bootstrapv1.KubeadmBaseConfig{
+						InitConfiguration: &bootstrapv1.InitConfiguration{},
+					},
 				},
 			},
 		}
@@ -979,13 +1061,15 @@ func TestMatchesKubeadmBootstrapConfig(t *testing.T) {
 		kcp := &controlplanev1.KubeadmControlPlane{
 			Spec: controlplanev1.KubeadmControlPlaneSpec{
 				KubeadmConfigSpec: bootstrapv1.KubeadmConfigSpec{
-					ClusterConfiguration: &bootstrapv1.ClusterConfiguration{},
-					InitConfiguration: &bootstrapv1.InitConfiguration{
-						NodeRegistration: bootstrapv1.NodeRegistrationOptions{
-							Name: "foo", // This is a change
+					KubeadmBaseConfig: bootstrapv1.KubeadmBaseConfig{
+						ClusterConfiguration: &bootstrapv1.ClusterConfiguration{},
+						InitConfiguration: &bootstrapv1.InitConfiguration{
+							NodeRegistration: bootstrapv1.NodeRegistrationOptions{
+								Name: "foo", // This is a change
+							},
 						},
+						JoinConfiguration: &bootstrapv1.JoinConfiguration{},
 					},
-					JoinConfiguration: &bootstrapv1.JoinConfiguration{},
 				},
 			},
 		}
@@ -1020,7 +1104,9 @@ func TestMatchesKubeadmBootstrapConfig(t *testing.T) {
 					Name:      "test",
 				},
 				Spec: bootstrapv1.KubeadmConfigSpec{
-					InitConfiguration: &bootstrapv1.InitConfiguration{},
+					KubeadmBaseConfig: bootstrapv1.KubeadmBaseConfig{
+						InitConfiguration: &bootstrapv1.InitConfiguration{},
+					},
 				},
 			},
 		}
@@ -1028,23 +1114,28 @@ func TestMatchesKubeadmBootstrapConfig(t *testing.T) {
 		g.Expect(err).ToNot(HaveOccurred())
 		g.Expect(match).To(BeFalse())
 		g.Expect(reason).To(BeComparableTo(`Machine KubeadmConfig InitConfiguration or JoinConfiguration are outdated: diff: &v1beta2.KubeadmConfigSpec{
-    ClusterConfiguration: nil,
-    InitConfiguration: &v1beta2.InitConfiguration{
-      BootstrapTokens: nil,
-      NodeRegistration: v1beta2.NodeRegistrationOptions{
--       Name:      "",
-+       Name:      "foo",
-        CRISocket: "",
-        Taints:    nil,
-        ... // 4 identical fields
+    KubeadmBaseConfig: v1beta2.KubeadmBaseConfig{
+      ClusterConfiguration: nil,
+      InitConfiguration: &v1beta2.InitConfiguration{
+        BootstrapTokens: nil,
+        NodeRegistration: v1beta2.NodeRegistrationOptions{
+-         Name:      "",
++         Name:      "foo",
+          CRISocket: "",
+          Taints:    nil,
+          ... // 4 identical fields
+        },
+        LocalAPIEndpoint: {},
+        SkipPhases:       nil,
+        ... // 2 identical fields
       },
-      LocalAPIEndpoint: {},
-      SkipPhases:       nil,
-      ... // 2 identical fields
+      JoinConfiguration:  nil,
+      PreKubeadmCommands: nil,
+      ... // 3 identical fields
     },
-    JoinConfiguration: nil,
-    Files:             nil,
-    ... // 10 identical fields
+    Files:     nil,
+    DiskSetup: nil,
+    ... // 5 identical fields
   }`))
 	})
 	t.Run("returns true if JoinConfiguration is equal", func(t *testing.T) {
@@ -1052,9 +1143,11 @@ func TestMatchesKubeadmBootstrapConfig(t *testing.T) {
 		kcp := &controlplanev1.KubeadmControlPlane{
 			Spec: controlplanev1.KubeadmControlPlaneSpec{
 				KubeadmConfigSpec: bootstrapv1.KubeadmConfigSpec{
-					ClusterConfiguration: &bootstrapv1.ClusterConfiguration{},
-					InitConfiguration:    &bootstrapv1.InitConfiguration{},
-					JoinConfiguration:    &bootstrapv1.JoinConfiguration{},
+					KubeadmBaseConfig: bootstrapv1.KubeadmBaseConfig{
+						ClusterConfiguration: &bootstrapv1.ClusterConfiguration{},
+						InitConfiguration:    &bootstrapv1.InitConfiguration{},
+						JoinConfiguration:    &bootstrapv1.JoinConfiguration{},
+					},
 				},
 			},
 		}
@@ -1089,7 +1182,9 @@ func TestMatchesKubeadmBootstrapConfig(t *testing.T) {
 					Name:      "test",
 				},
 				Spec: bootstrapv1.KubeadmConfigSpec{
-					JoinConfiguration: &bootstrapv1.JoinConfiguration{},
+					KubeadmBaseConfig: bootstrapv1.KubeadmBaseConfig{
+						JoinConfiguration: &bootstrapv1.JoinConfiguration{},
+					},
 				},
 			},
 		}
@@ -1103,11 +1198,13 @@ func TestMatchesKubeadmBootstrapConfig(t *testing.T) {
 		kcp := &controlplanev1.KubeadmControlPlane{
 			Spec: controlplanev1.KubeadmControlPlaneSpec{
 				KubeadmConfigSpec: bootstrapv1.KubeadmConfigSpec{
-					ClusterConfiguration: &bootstrapv1.ClusterConfiguration{},
-					InitConfiguration:    &bootstrapv1.InitConfiguration{},
-					JoinConfiguration: &bootstrapv1.JoinConfiguration{
-						NodeRegistration: bootstrapv1.NodeRegistrationOptions{
-							Name: "foo", // This is a change
+					KubeadmBaseConfig: bootstrapv1.KubeadmBaseConfig{
+						ClusterConfiguration: &bootstrapv1.ClusterConfiguration{},
+						InitConfiguration:    &bootstrapv1.InitConfiguration{},
+						JoinConfiguration: &bootstrapv1.JoinConfiguration{
+							NodeRegistration: bootstrapv1.NodeRegistrationOptions{
+								Name: "foo", // This is a change
+							},
 						},
 					},
 				},
@@ -1144,7 +1241,9 @@ func TestMatchesKubeadmBootstrapConfig(t *testing.T) {
 					Name:      "test",
 				},
 				Spec: bootstrapv1.KubeadmConfigSpec{
-					JoinConfiguration: &bootstrapv1.JoinConfiguration{},
+					KubeadmBaseConfig: bootstrapv1.KubeadmBaseConfig{
+						JoinConfiguration: &bootstrapv1.JoinConfiguration{},
+					},
 				},
 			},
 		}
@@ -1152,23 +1251,28 @@ func TestMatchesKubeadmBootstrapConfig(t *testing.T) {
 		g.Expect(err).ToNot(HaveOccurred())
 		g.Expect(match).To(BeFalse())
 		g.Expect(reason).To(BeComparableTo(`Machine KubeadmConfig InitConfiguration or JoinConfiguration are outdated: diff: &v1beta2.KubeadmConfigSpec{
-    ClusterConfiguration: nil,
-    InitConfiguration:    nil,
-    JoinConfiguration: &v1beta2.JoinConfiguration{
-      NodeRegistration: v1beta2.NodeRegistrationOptions{
--       Name:      "",
-+       Name:      "foo",
-        CRISocket: "",
-        Taints:    nil,
+    KubeadmBaseConfig: v1beta2.KubeadmBaseConfig{
+      ClusterConfiguration: nil,
+      InitConfiguration:    nil,
+      JoinConfiguration: &v1beta2.JoinConfiguration{
+        NodeRegistration: v1beta2.NodeRegistrationOptions{
+-         Name:      "",
++         Name:      "foo",
+          CRISocket: "",
+          Taints:    nil,
+          ... // 4 identical fields
+        },
+        CACertPath: "",
+        Discovery:  {},
         ... // 4 identical fields
       },
-      CACertPath: "",
-      Discovery:  {},
-      ... // 4 identical fields
+      PreKubeadmCommands:  nil,
+      PostKubeadmCommands: nil,
+      ... // 2 identical fields
     },
     Files:     nil,
     DiskSetup: nil,
-    ... // 9 identical fields
+    ... // 5 identical fields
   }`))
 	})
 	t.Run("returns false if some other configurations are not equal", func(t *testing.T) {
@@ -1176,10 +1280,12 @@ func TestMatchesKubeadmBootstrapConfig(t *testing.T) {
 		kcp := &controlplanev1.KubeadmControlPlane{
 			Spec: controlplanev1.KubeadmControlPlaneSpec{
 				KubeadmConfigSpec: bootstrapv1.KubeadmConfigSpec{
-					ClusterConfiguration: &bootstrapv1.ClusterConfiguration{},
-					InitConfiguration:    &bootstrapv1.InitConfiguration{},
-					JoinConfiguration:    &bootstrapv1.JoinConfiguration{},
-					Files:                []bootstrapv1.File{}, // This is a change
+					KubeadmBaseConfig: bootstrapv1.KubeadmBaseConfig{
+						ClusterConfiguration: &bootstrapv1.ClusterConfiguration{},
+						InitConfiguration:    &bootstrapv1.InitConfiguration{},
+						JoinConfiguration:    &bootstrapv1.JoinConfiguration{},
+					},
+					Files: []bootstrapv1.File{}, // This is a change
 				},
 			},
 		}
@@ -1214,7 +1320,9 @@ func TestMatchesKubeadmBootstrapConfig(t *testing.T) {
 					Name:      "test",
 				},
 				Spec: bootstrapv1.KubeadmConfigSpec{
-					InitConfiguration: &bootstrapv1.InitConfiguration{},
+					KubeadmBaseConfig: bootstrapv1.KubeadmBaseConfig{
+						InitConfiguration: &bootstrapv1.InitConfiguration{},
+					},
 				},
 			},
 		}
@@ -1222,14 +1330,12 @@ func TestMatchesKubeadmBootstrapConfig(t *testing.T) {
 		g.Expect(err).ToNot(HaveOccurred())
 		g.Expect(match).To(BeFalse())
 		g.Expect(reason).To(BeComparableTo(`Machine KubeadmConfig InitConfiguration or JoinConfiguration are outdated: diff: &v1beta2.KubeadmConfigSpec{
-    ClusterConfiguration: nil,
-    InitConfiguration:    &{NodeRegistration: {ImagePullPolicy: "IfNotPresent"}},
-    JoinConfiguration:    nil,
--   Files:                nil,
-+   Files:                []v1beta2.File{},
-    DiskSetup:            nil,
-    Mounts:               nil,
-    ... // 8 identical fields
+    KubeadmBaseConfig: {InitConfiguration: &{NodeRegistration: {ImagePullPolicy: "IfNotPresent"}}, Format: "cloud-config"},
+-   Files:             nil,
++   Files:             []v1beta2.File{},
+    DiskSetup:         nil,
+    Mounts:            nil,
+    ... // 4 identical fields
   }`))
 	})
 	t.Run("should match on labels and annotations", func(t *testing.T) {
@@ -1246,9 +1352,11 @@ func TestMatchesKubeadmBootstrapConfig(t *testing.T) {
 					},
 				},
 				KubeadmConfigSpec: bootstrapv1.KubeadmConfigSpec{
-					ClusterConfiguration: &bootstrapv1.ClusterConfiguration{},
-					InitConfiguration:    &bootstrapv1.InitConfiguration{},
-					JoinConfiguration:    &bootstrapv1.JoinConfiguration{},
+					KubeadmBaseConfig: bootstrapv1.KubeadmBaseConfig{
+						ClusterConfiguration: &bootstrapv1.ClusterConfiguration{},
+						InitConfiguration:    &bootstrapv1.InitConfiguration{},
+						JoinConfiguration:    &bootstrapv1.JoinConfiguration{},
+					},
 				},
 			},
 		}
@@ -1283,7 +1391,9 @@ func TestMatchesKubeadmBootstrapConfig(t *testing.T) {
 					Name:      "test",
 				},
 				Spec: bootstrapv1.KubeadmConfigSpec{
-					JoinConfiguration: &bootstrapv1.JoinConfiguration{},
+					KubeadmBaseConfig: bootstrapv1.KubeadmBaseConfig{
+						JoinConfiguration: &bootstrapv1.JoinConfiguration{},
+					},
 				},
 			},
 		}
@@ -1555,8 +1665,10 @@ func TestUpToDate(t *testing.T) {
 				InfrastructureRef: corev1.ObjectReference{APIVersion: clusterv1.GroupVersionInfrastructure.String(), Kind: "AWSMachineTemplate", Name: "template1"},
 			},
 			KubeadmConfigSpec: bootstrapv1.KubeadmConfigSpec{
-				ClusterConfiguration: &bootstrapv1.ClusterConfiguration{
-					CertificatesDir: "foo",
+				KubeadmBaseConfig: bootstrapv1.KubeadmBaseConfig{
+					ClusterConfiguration: &bootstrapv1.ClusterConfiguration{
+						CertificatesDir: "foo",
+					},
 				},
 			},
 			RolloutBefore: &controlplanev1.RolloutBefore{
@@ -1601,7 +1713,9 @@ func TestUpToDate(t *testing.T) {
 	defaultMachineConfigs := map[string]*bootstrapv1.KubeadmConfig{
 		defaultMachine.Name: {
 			Spec: bootstrapv1.KubeadmConfigSpec{
-				InitConfiguration: &bootstrapv1.InitConfiguration{}, // first control-plane
+				KubeadmBaseConfig: bootstrapv1.KubeadmBaseConfig{
+					InitConfiguration: &bootstrapv1.InitConfiguration{}, // first control-plane
+				},
 			},
 		},
 	}

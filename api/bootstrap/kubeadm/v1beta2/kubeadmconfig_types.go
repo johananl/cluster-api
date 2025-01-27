@@ -48,9 +48,9 @@ var (
 	pathConflictMsg                                  = "path property must be unique among all files"
 )
 
-// KubeadmConfigSpec defines the desired state of KubeadmConfig.
+// KubeadmBaseConfig defines common data among all types derived from KubeadmConfigSpec.
 // Either ClusterConfiguration and InitConfiguration should be defined or the JoinConfiguration should be defined.
-type KubeadmConfigSpec struct {
+type KubeadmBaseConfig struct {
 	// clusterConfiguration along with InitConfiguration are the configurations necessary for the init command
 	// +optional
 	ClusterConfiguration *ClusterConfiguration `json:"clusterConfiguration,omitempty"`
@@ -62,6 +62,39 @@ type KubeadmConfigSpec struct {
 	// joinConfiguration is the kubeadm configuration for the join command
 	// +optional
 	JoinConfiguration *JoinConfiguration `json:"joinConfiguration,omitempty"`
+
+	// preKubeadmCommands specifies extra commands to run before kubeadm runs.
+	// With cloud-init, this is prepended to the runcmd module configuration, and is typically executed in
+	// the cloud-final.service systemd unit. In Ignition, this is prepended to /etc/kubeadm.sh.
+	// +optional
+	// +kubebuilder:validation:MaxItems=1000
+	// +kubebuilder:validation:items:MinLength=1
+	// +kubebuilder:validation:items:MaxLength=10240
+	PreKubeadmCommands []string `json:"preKubeadmCommands,omitempty"`
+
+	// postKubeadmCommands specifies extra commands to run after kubeadm runs.
+	// With cloud-init, this is appended to the runcmd module configuration, and is typically executed in
+	// the cloud-final.service systemd unit. In Ignition, this is appended to /etc/kubeadm.sh.
+	// +optional
+	// +kubebuilder:validation:MaxItems=1000
+	// +kubebuilder:validation:items:MinLength=1
+	// +kubebuilder:validation:items:MaxLength=10240
+	PostKubeadmCommands []string `json:"postKubeadmCommands,omitempty"`
+
+	// format specifies the output format of the bootstrap data
+	// +optional
+	Format Format `json:"format,omitempty"`
+
+	// verbosity is the number for the kubeadm log level verbosity.
+	// It overrides the `--v` flag in kubeadm commands.
+	// +optional
+	Verbosity *int32 `json:"verbosity,omitempty"`
+}
+
+// KubeadmConfigSpec defines the desired state of KubeadmConfig.
+// Either ClusterConfiguration and InitConfiguration should be defined or the JoinConfiguration should be defined.
+type KubeadmConfigSpec struct {
+	KubeadmBaseConfig `json:",inline"`
 
 	// files specifies extra files to be passed to user_data upon creation.
 	// +optional
@@ -86,24 +119,6 @@ type KubeadmConfigSpec struct {
 	// +kubebuilder:validation:items:MaxLength=10240
 	BootCommands []string `json:"bootCommands,omitempty"`
 
-	// preKubeadmCommands specifies extra commands to run before kubeadm runs.
-	// With cloud-init, this is prepended to the runcmd module configuration, and is typically executed in
-	// the cloud-final.service systemd unit. In Ignition, this is prepended to /etc/kubeadm.sh.
-	// +optional
-	// +kubebuilder:validation:MaxItems=1000
-	// +kubebuilder:validation:items:MinLength=1
-	// +kubebuilder:validation:items:MaxLength=10240
-	PreKubeadmCommands []string `json:"preKubeadmCommands,omitempty"`
-
-	// postKubeadmCommands specifies extra commands to run after kubeadm runs.
-	// With cloud-init, this is appended to the runcmd module configuration, and is typically executed in
-	// the cloud-final.service systemd unit. In Ignition, this is appended to /etc/kubeadm.sh.
-	// +optional
-	// +kubebuilder:validation:MaxItems=1000
-	// +kubebuilder:validation:items:MinLength=1
-	// +kubebuilder:validation:items:MaxLength=10240
-	PostKubeadmCommands []string `json:"postKubeadmCommands,omitempty"`
-
 	// users specifies extra users to add
 	// +optional
 	// +kubebuilder:validation:MaxItems=100
@@ -112,15 +127,6 @@ type KubeadmConfigSpec struct {
 	// ntp specifies NTP configuration
 	// +optional
 	NTP *NTP `json:"ntp,omitempty"`
-
-	// format specifies the output format of the bootstrap data
-	// +optional
-	Format Format `json:"format,omitempty"`
-
-	// verbosity is the number for the kubeadm log level verbosity.
-	// It overrides the `--v` flag in kubeadm commands.
-	// +optional
-	Verbosity *int32 `json:"verbosity,omitempty"`
 
 	// ignition contains Ignition specific configuration.
 	// +optional

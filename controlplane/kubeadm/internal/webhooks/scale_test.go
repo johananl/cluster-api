@@ -71,33 +71,29 @@ func TestKubeadmControlPlaneValidateScale(t *testing.T) {
 				},
 			},
 			KubeadmConfigSpec: bootstrapv1.KubeadmConfigSpec{
-				InitConfiguration: &bootstrapv1.InitConfiguration{
-					LocalAPIEndpoint: bootstrapv1.APIEndpoint{
-						AdvertiseAddress: "127.0.0.1",
-						BindPort:         int32(443),
-					},
-					NodeRegistration: bootstrapv1.NodeRegistrationOptions{
-						Name: "kcp-managed-etcd",
-					},
-				},
-				ClusterConfiguration: &bootstrapv1.ClusterConfiguration{
-					DNS: bootstrapv1.DNS{
-						ImageMeta: bootstrapv1.ImageMeta{
-							ImageRepository: "registry.k8s.io/coredns",
-							ImageTag:        "1.6.5",
+				KubeadmBaseConfig: bootstrapv1.KubeadmBaseConfig{
+					InitConfiguration: &bootstrapv1.InitConfiguration{
+						LocalAPIEndpoint: bootstrapv1.APIEndpoint{
+							AdvertiseAddress: "127.0.0.1",
+							BindPort:         int32(443),
+						},
+						NodeRegistration: bootstrapv1.NodeRegistrationOptions{
+							Name: "kcp-managed-etcd",
 						},
 					},
-				},
-				JoinConfiguration: &bootstrapv1.JoinConfiguration{
-					NodeRegistration: bootstrapv1.NodeRegistrationOptions{
-						Name: "kcp-managed-etcd",
+					ClusterConfiguration: &bootstrapv1.ClusterConfiguration{
+						DNS: bootstrapv1.DNS{
+							ImageMeta: bootstrapv1.ImageMeta{
+								ImageRepository: "registry.k8s.io/coredns",
+								ImageTag:        "1.6.5",
+							},
+						},
 					},
-				},
-				PreKubeadmCommands: []string{
-					"kcp-managed-etcd", "foo",
-				},
-				PostKubeadmCommands: []string{
-					"kcp-managed-etcd", "foo",
+					JoinConfiguration: &bootstrapv1.JoinConfiguration{
+						NodeRegistration: bootstrapv1.NodeRegistrationOptions{
+							Name: "kcp-managed-etcd",
+						},
+					},
 				},
 				Files: []bootstrapv1.File{
 					{

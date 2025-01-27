@@ -176,8 +176,10 @@ func TestKubeadmControlPlaneTemplateUpdateValidation(t *testing.T) {
 				Template: controlplanev1.KubeadmControlPlaneTemplateResource{
 					Spec: controlplanev1.KubeadmControlPlaneTemplateResourceSpec{
 						KubeadmConfigSpec: bootstrapv1.KubeadmConfigSpec{
-							// Only this field is different, but defaulting will set it as well, so this should pass the immutability check.
-							Format: bootstrapv1.CloudConfig,
+							KubeadmBaseConfig: bootstrapv1.KubeadmBaseConfig{
+								// Only this field is different, but defaulting will set it as well, so this should pass the immutability check.
+								Format: bootstrapv1.CloudConfig,
+							},
 						},
 						MachineTemplate: &controlplanev1.KubeadmControlPlaneTemplateMachineTemplate{
 							NodeDrainTimeoutSeconds: ptr.To(int32(10 * 60)),
@@ -209,11 +211,13 @@ func TestKubeadmControlPlaneTemplateUpdateValidation(t *testing.T) {
 				Template: controlplanev1.KubeadmControlPlaneTemplateResource{
 					Spec: controlplanev1.KubeadmControlPlaneTemplateResourceSpec{
 						KubeadmConfigSpec: bootstrapv1.KubeadmConfigSpec{
-							// Defaulting will set this field as well.
-							Format: bootstrapv1.CloudConfig,
-							// This will fail the immutability check.
-							PreKubeadmCommands: []string{
-								"new-cmd",
+							KubeadmBaseConfig: bootstrapv1.KubeadmBaseConfig{
+								// Defaulting will set this field as well.
+								Format: bootstrapv1.CloudConfig,
+								// This will fail the immutability check.
+								PreKubeadmCommands: []string{
+									"new-cmd",
+								},
 							},
 						},
 						MachineTemplate: &controlplanev1.KubeadmControlPlaneTemplateMachineTemplate{
