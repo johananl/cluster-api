@@ -116,9 +116,9 @@ linters-settings:
       - pkg: sigs.k8s.io/controller-runtime
         alias: ctrl
       # CABPK
-      - pkg: sigs.k8s.io/cluster-api/internal/apis/bootstrap/kubeadm/v1alpha3
+      - pkg: sigs.k8s.io/cluster-api/bootstrap/kubeadm/api/v1alpha3
         alias: bootstrapv1alpha3
-      - pkg: sigs.k8s.io/cluster-api/internal/apis/bootstrap/kubeadm/v1alpha4
+      - pkg: sigs.k8s.io/cluster-api/bootstrap/kubeadm/api/v1alpha4
         alias: bootstrapv1alpha4
       - pkg: sigs.k8s.io/cluster-api/bootstrap/kubeadm/api/v1beta1
         alias: bootstrapv1

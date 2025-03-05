@@ -28,10 +28,10 @@ import (
 	runtime "k8s.io/apimachinery/pkg/runtime"
 	intstr "k8s.io/apimachinery/pkg/util/intstr"
 	clusterapiapiv1beta1 "sigs.k8s.io/cluster-api/api/v1beta1"
+	apiv1alpha3 "sigs.k8s.io/cluster-api/bootstrap/kubeadm/api/v1alpha3"
 	apiv1beta1 "sigs.k8s.io/cluster-api/bootstrap/kubeadm/api/v1beta1"
 	v1beta1 "sigs.k8s.io/cluster-api/controlplane/kubeadm/api/v1beta1"
 	errors "sigs.k8s.io/cluster-api/errors"
-	kubeadmv1alpha3 "sigs.k8s.io/cluster-api/internal/apis/bootstrap/kubeadm/v1alpha3"
 	corev1alpha3 "sigs.k8s.io/cluster-api/internal/apis/core/v1alpha3"
 )
 
@@ -87,8 +87,8 @@ func RegisterConversions(s *runtime.Scheme) error {
 	}); err != nil {
 		return err
 	}
-	if err := s.AddConversionFunc((*kubeadmv1alpha3.KubeadmConfigSpec)(nil), (*apiv1beta1.KubeadmConfigSpec)(nil), func(a, b interface{}, scope conversion.Scope) error {
-		return Convert_v1alpha3_KubeadmConfigSpec_To_v1beta1_KubeadmConfigSpec(a.(*kubeadmv1alpha3.KubeadmConfigSpec), b.(*apiv1beta1.KubeadmConfigSpec), scope)
+	if err := s.AddConversionFunc((*apiv1alpha3.KubeadmConfigSpec)(nil), (*apiv1beta1.KubeadmConfigSpec)(nil), func(a, b interface{}, scope conversion.Scope) error {
+		return Convert_v1alpha3_KubeadmConfigSpec_To_v1beta1_KubeadmConfigSpec(a.(*apiv1alpha3.KubeadmConfigSpec), b.(*apiv1beta1.KubeadmConfigSpec), scope)
 	}); err != nil {
 		return err
 	}
@@ -97,8 +97,8 @@ func RegisterConversions(s *runtime.Scheme) error {
 	}); err != nil {
 		return err
 	}
-	if err := s.AddConversionFunc((*apiv1beta1.KubeadmConfigSpec)(nil), (*kubeadmv1alpha3.KubeadmConfigSpec)(nil), func(a, b interface{}, scope conversion.Scope) error {
-		return Convert_v1beta1_KubeadmConfigSpec_To_v1alpha3_KubeadmConfigSpec(a.(*apiv1beta1.KubeadmConfigSpec), b.(*kubeadmv1alpha3.KubeadmConfigSpec), scope)
+	if err := s.AddConversionFunc((*apiv1beta1.KubeadmConfigSpec)(nil), (*apiv1alpha3.KubeadmConfigSpec)(nil), func(a, b interface{}, scope conversion.Scope) error {
+		return Convert_v1beta1_KubeadmConfigSpec_To_v1alpha3_KubeadmConfigSpec(a.(*apiv1beta1.KubeadmConfigSpec), b.(*apiv1alpha3.KubeadmConfigSpec), scope)
 	}); err != nil {
 		return err
 	}
