@@ -21,9 +21,9 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/conversion"
 
 	clusterv1 "sigs.k8s.io/cluster-api/api/v1beta1"
+	bootstrapv1alpha4 "sigs.k8s.io/cluster-api/bootstrap/kubeadm/api/v1alpha4"
 	bootstrapv1 "sigs.k8s.io/cluster-api/bootstrap/kubeadm/api/v1beta1"
 	controlplanev1 "sigs.k8s.io/cluster-api/controlplane/kubeadm/api/v1beta1"
-	bootstrapv1alpha4 "sigs.k8s.io/cluster-api/internal/apis/bootstrap/kubeadm/v1alpha4"
 	clusterv1alpha4 "sigs.k8s.io/cluster-api/internal/apis/core/v1alpha4"
 	corev1alpha4 "sigs.k8s.io/cluster-api/internal/apis/core/v1alpha4"
 	utilconversion "sigs.k8s.io/cluster-api/util/conversion"
